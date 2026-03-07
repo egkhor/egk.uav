@@ -1,2 +1,2 @@
-# EGK.UAV
+# egk.uav
 UAV Design

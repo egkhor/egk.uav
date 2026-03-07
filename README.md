@@ -1,2 +1,0 @@
-# egk.uav
-UAV Design

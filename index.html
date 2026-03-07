@@ -1,936 +1,714 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2000km Surveillance UAV — Technical Drawing</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>EGK Aerodynamic Division — UAV Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Chakra+Petch:wght@300;400;600;700&family=Exo+2:wght@200;400;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #050810;
-    --panel: #0a0f1e;
-    --border: #1a2a4a;
-    --accent: #00c8ff;
-    --accent2: #ff6b00;
-    --accent3: #00ff88;
-    --text: #c8ddf0;
-    --dim: #4a6080;
-    --grid: #0d1828;
-    --highlight: #1a3a5c;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+:root{
+  --bg:#04060c;
+  --panel:#080c18;
+  --border:#1a2640;
+  --gold:#d4a820;
+  --gold2:#f0c840;
+  --teal:#20c8d4;
+  --red:#e04040;
+  --text:#c8d8ec;
+  --dim:#3c5470;
+  --grid:#0a0e1c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;}
 
-/* Scanline overlay */
-body::before {
-content: ‘’;
-position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-pointer-events: none; z-index: 1000;
+/* Scanline */
+body::before{content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.018) 3px,rgba(0,0,0,.018) 4px);
+  pointer-events:none;z-index:9000;}
+
+/* ── NAVBAR ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:68px;
+  background:rgba(4,6,12,.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.nav-brand{display:flex;align-items:center;gap:14px;}
+.nav-logo{width:44px;height:44px;object-fit:contain;border-radius:4px;}
+.nav-name{font-family:'Chakra Petch',monospace;font-size:13px;font-weight:700;letter-spacing:3px;color:#fff;}
+.nav-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:2px;margin-top:2px;}
+.nav-links{display:flex;gap:32px;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-decoration:none;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  position:relative;overflow:hidden;padding:80px 40px 60px;
+  background:radial-gradient(ellipse at 50% 40%,#0d1628 0%,#04060c 70%);
+}
+/* Animated grid background */
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridscroll 20s linear infinite;
+  opacity:.6;
+}
+@keyframes gridscroll{0%{background-position:0 0}100%{background-position:0 40px}}
+/* Glow orbs */
+.hero::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,32,.07) 0%,transparent 70%);
+  top:10%;left:50%;transform:translateX(-50%);}
+.hero-badge{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;
+  color:var(--gold);border:1px solid var(--gold);padding:6px 18px;margin-bottom:28px;
+  animation:fadein .8s ease both;
+}
+.hero-logo{width:90px;height:90px;object-fit:contain;margin-bottom:20px;animation:fadein .6s ease both;filter:drop-shadow(0 0 20px rgba(212,168,32,.4));}
+.hero h1{
+  font-family:'Chakra Petch',monospace;font-size:clamp(32px,5vw,62px);font-weight:700;
+  letter-spacing:8px;text-align:center;color:#fff;line-height:1.1;
+  animation:fadein 1s ease .1s both;
+}
+.hero h1 span{color:var(--gold);}
+.hero-sub{
+  font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;
+  color:var(--teal);margin-top:14px;text-align:center;
+  animation:fadein 1s ease .2s both;
+}
+.hero-desc{
+  max-width:680px;text-align:center;font-size:15px;color:var(--dim);
+  margin-top:20px;line-height:1.7;animation:fadein 1s ease .3s both;
+}
+.hero-ctas{display:flex;gap:16px;margin-top:36px;flex-wrap:wrap;justify-content:center;animation:fadein 1s ease .4s both;}
+.btn{
+  padding:12px 28px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;
+  text-transform:uppercase;cursor:pointer;border:none;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;transition:all .2s;
+}
+.btn-gold{background:var(--gold);color:#000;font-weight:700;}
+.btn-gold:hover{background:var(--gold2);box-shadow:0 0 24px rgba(212,168,32,.5);}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);}
+.btn-outline:hover{background:rgba(212,168,32,.08);box-shadow:0 0 16px rgba(212,168,32,.3);}
+.btn-teal{background:transparent;color:var(--teal);border:1px solid var(--teal);}
+.btn-teal:hover{background:rgba(32,200,212,.08);}
+.hero-stats{
+  display:flex;gap:48px;margin-top:56px;padding-top:32px;
+  border-top:1px solid var(--border);animation:fadein 1s ease .5s both;flex-wrap:wrap;justify-content:center;
+}
+.stat{text-align:center;}
+.stat-val{font-family:'Chakra Petch',monospace;font-size:32px;font-weight:700;color:var(--gold);display:block;}
+.stat-key{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim);margin-top:4px;}
+@keyframes fadein{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ── SECTION BASE ── */
+section{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.sec-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--gold);margin-bottom:12px;display:block;}
+.sec-title{font-family:'Chakra Petch',monospace;font-size:clamp(24px,3vw,38px);font-weight:700;color:#fff;margin-bottom:8px;}
+.sec-sub{color:var(--dim);font-size:14px;line-height:1.6;max-width:640px;margin-bottom:48px;}
+
+/* ── ABOUT STRIP ── */
+.about-strip{
+  background:linear-gradient(135deg,#080c18 0%,#0d1628 100%);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:48px 40px;
+}
+.about-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+.about-text p{font-size:15px;line-height:1.8;color:var(--text);margin-bottom:12px;}
+.about-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.tag{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  padding:5px 12px;border:1px solid var(--border);color:var(--dim);
+}
+.about-info{display:flex;flex-direction:column;gap:14px;}
+.info-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.info-k{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:1px;}
+.info-v{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--teal);}
+
+/* ── UAV CARDS ── */
+.uav-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.uav-card{
+  background:var(--panel);border:1px solid var(--border);
+  position:relative;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.uav-card:hover{border-color:var(--gold);box-shadow:0 0 40px rgba(212,168,32,.1);}
+.uav-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.uav-card-header{padding:24px 24px 16px;}
+.uav-badge{
+  display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  padding:4px 10px;background:rgba(212,168,32,.1);border:1px solid var(--gold);color:var(--gold);
+  margin-bottom:12px;
+}
+.uav-card h3{font-family:'Chakra Petch',monospace;font-size:22px;font-weight:700;color:#fff;letter-spacing:3px;margin-bottom:6px;}
+.uav-card .uav-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--teal);letter-spacing:2px;}
+
+/* SVG drawing preview */
+.uav-drawing{
+  background:#040810;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:16px;position:relative;
+}
+.uav-drawing::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(10,14,28,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(10,14,28,.8) 1px,transparent 1px);
+  background-size:20px 20px;pointer-events:none;
+}
+.uav-specs{padding:16px 24px;}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.spec-item{padding:8px 0;border-bottom:1px solid rgba(26,38,64,.5);display:flex;justify-content:space-between;}
+.spec-item:nth-child(odd){padding-right:16px;}
+.spec-item:nth-child(even){padding-left:16px;border-left:1px solid rgba(26,38,64,.5);}
+.sk{font-size:11px;color:var(--dim);font-family:'Share Tech Mono',monospace;}
+.sv{font-size:11px;color:var(--text);font-family:'Share Tech Mono',monospace;font-weight:600;}
+.sv.hi{color:var(--gold);}
+.uav-card-footer{
+  padding:16px 24px;display:flex;gap:10px;flex-wrap:wrap;
+  border-top:1px solid var(--border);background:rgba(0,0,0,.2);
 }
 
-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 16px 32px;
-border-bottom: 1px solid var(–border);
-background: linear-gradient(90deg, #050810 0%, #0a1428 50%, #050810 100%);
-position: relative;
+/* ── BOM SECTION ── */
+.bom-section{background:linear-gradient(180deg,#04060c,#080c18);}
+.bom-tabs{display:flex;gap:2px;margin-bottom:24px;border-bottom:1px solid var(--border);}
+.bom-tab{
+  padding:12px 24px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;cursor:pointer;color:var(--dim);border-bottom:2px solid transparent;
+  transition:all .2s;user-select:none;
 }
-header::after {
-content: ‘’;
-position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-background: linear-gradient(90deg, transparent, var(–accent), transparent);
+.bom-tab:hover{color:var(--text);}
+.bom-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.bom-panel{display:none;}
+.bom-panel.active{display:block;}
+.bom-table{width:100%;border-collapse:collapse;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.bom-table th{background:#0d1020;color:var(--gold);padding:10px 14px;text-align:left;letter-spacing:1px;border:1px solid var(--border);}
+.bom-table td{padding:9px 14px;border:1px solid rgba(26,38,64,.5);color:var(--text);vertical-align:top;}
+.bom-table tr:nth-child(even) td{background:rgba(8,12,24,.5);}
+.bom-table tr:hover td{background:rgba(212,168,32,.04);}
+.bom-cat{
+  background:rgba(212,168,32,.06);color:var(--gold);font-family:'Chakra Petch',monospace;
+  font-size:12px;font-weight:600;letter-spacing:3px;padding:10px 14px;
+  border-left:3px solid var(--gold);
 }
-.logo {
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 11px;
-color: var(–accent);
-letter-spacing: 3px;
-text-transform: uppercase;
-}
-.title-block { text-align: center; }
-.title-block h1 {
-font-size: 22px; font-weight: 700; letter-spacing: 6px;
-text-transform: uppercase; color: #fff;
-}
-.title-block .sub {
-font-size: 11px; letter-spacing: 4px; color: var(–accent);
-font-family: ‘Share Tech Mono’, monospace; margin-top: 4px;
-}
-.meta {
-text-align: right;
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 10px; color: var(–dim);
-line-height: 1.8;
+.qty-badge{
+  display:inline-block;background:rgba(32,200,212,.1);border:1px solid var(--teal);
+  color:var(--teal);padding:1px 7px;font-size:9px;
 }
 
-/* Tab Nav */
-.tabs {
-display: flex; gap: 0;
-background: var(–panel);
-border-bottom: 1px solid var(–border);
-padding: 0 32px;
+/* ── DOWNLOADS ── */
+.dl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.dl-card{
+  background:var(--panel);border:1px solid var(--border);padding:24px;
+  display:flex;flex-direction:column;gap:14px;
+  transition:border-color .2s;position:relative;overflow:hidden;
 }
-.tab {
-padding: 14px 28px;
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 11px; letter-spacing: 2px;
-text-transform: uppercase; cursor: pointer;
-color: var(–dim);
-border-bottom: 2px solid transparent;
-transition: all 0.2s;
-user-select: none;
-}
-.tab:hover { color: var(–text); }
-.tab.active { color: var(–accent); border-bottom-color: var(–accent); }
+.dl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);}
+.dl-card:hover{border-color:var(--gold);}
+.dl-icon{font-size:28px;line-height:1;}
+.dl-title{font-family:'Chakra Petch',monospace;font-size:15px;font-weight:700;color:#fff;letter-spacing:2px;}
+.dl-desc{font-size:12px;color:var(--dim);line-height:1.6;}
+.dl-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
 
-/* Panels */
-.panel { display: none; padding: 32px; }
-.panel.active { display: block; }
+/* ── FOOTER ── */
+footer{
+  background:var(--panel);border-top:1px solid var(--border);
+  padding:48px 40px;position:relative;
+}
+footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;}
+.footer-brand{display:flex;flex-direction:column;gap:12px;}
+.footer-logo{width:52px;height:52px;object-fit:contain;}
+.footer-name{font-family:'Chakra Petch',monospace;font-size:14px;font-weight:700;color:#fff;letter-spacing:3px;}
+.footer-tagline{font-size:12px;color:var(--dim);line-height:1.6;}
+.footer-col h4{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:16px;}
+.footer-col p,.footer-col a{font-size:12px;color:var(--dim);line-height:2;display:block;text-decoration:none;}
+.footer-col a:hover{color:var(--gold);}
+.footer-bottom{
+  max-width:1200px;margin:32px auto 0;padding-top:24px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-copy{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;}
 
-/* Drawing canvas area */
-.drawing-area {
-background: var(–panel);
-border: 1px solid var(–border);
-border-radius: 4px;
-position: relative;
-overflow: hidden;
+/* Responsive */
+@media(max-width:768px){
+  .uav-grid,.about-inner,.footer-inner{grid-template-columns:1fr;}
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .hero-stats{gap:24px;}
 }
-.drawing-area::before {
-content: ‘’;
-position: absolute; inset: 0;
-background-image:
-linear-gradient(var(–grid) 1px, transparent 1px),
-linear-gradient(90deg, var(–grid) 1px, transparent 1px);
-background-size: 30px 30px;
-pointer-events: none;
-}
-
-.view-label {
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 10px; letter-spacing: 3px;
-color: var(–accent); text-transform: uppercase;
-padding: 8px 14px;
-background: rgba(0,200,255,0.05);
-border-right: 1px solid var(–border);
-border-bottom: 1px solid var(–border);
-position: absolute; top: 0; left: 0;
-}
-
-/* Dimension lines */
-.dim-line {
-position: absolute;
-background: var(–accent2);
-opacity: 0.6;
-}
-.dim-label {
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 9px; color: var(–accent2);
-position: absolute;
-}
-
-/* Annotation dots */
-.callout {
-position: absolute;
-width: 8px; height: 8px;
-border-radius: 50%;
-background: var(–accent);
-border: 1px solid #fff;
-cursor: pointer;
-z-index: 10;
-transition: transform 0.2s, box-shadow 0.2s;
-animation: pulse 2s infinite;
-}
-.callout:hover {
-transform: scale(1.5);
-box-shadow: 0 0 12px var(–accent);
-animation: none;
-}
-@keyframes pulse {
-0%, 100% { box-shadow: 0 0 0 0 rgba(0,200,255,0.4); }
-50% { box-shadow: 0 0 0 6px rgba(0,200,255,0); }
-}
-.callout-line {
-position: absolute;
-background: var(–accent);
-opacity: 0.4;
-transform-origin: left center;
-height: 1px;
-pointer-events: none;
-}
-.callout-box {
-position: absolute;
-background: rgba(5,8,16,0.92);
-border: 1px solid var(–accent);
-padding: 6px 10px;
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 9px; color: var(–accent);
-pointer-events: none;
-white-space: nowrap;
-opacity: 0;
-transition: opacity 0.2s;
-z-index: 20;
-}
-.callout:hover + .callout-line + .callout-box,
-.callout:hover ~ .callout-box { opacity: 1; }
-
-/* Three-view layout */
-.three-view-grid {
-display: grid;
-grid-template-columns: 1fr 280px;
-grid-template-rows: 340px 280px;
-gap: 2px;
-}
-.view-side { grid-column: 1; grid-row: 1; }
-.view-front { grid-column: 2; grid-row: 1; }
-.view-top { grid-column: 1; grid-row: 2; }
-.view-iso { grid-column: 2; grid-row: 2; }
-
-/* Spec sidebar */
-.layout-with-sidebar { display: grid; grid-template-columns: 1fr 260px; gap: 24px; }
-.spec-card {
-background: var(–panel);
-border: 1px solid var(–border);
-border-radius: 4px;
-overflow: hidden;
-}
-.spec-card-header {
-padding: 10px 16px;
-background: rgba(0,200,255,0.06);
-border-bottom: 1px solid var(–border);
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 10px; letter-spacing: 2px; color: var(–accent);
-text-transform: uppercase;
-}
-.spec-row {
-display: flex; justify-content: space-between; align-items: center;
-padding: 8px 16px;
-border-bottom: 1px solid rgba(26,42,74,0.5);
-font-size: 13px;
-}
-.spec-row:last-child { border-bottom: none; }
-.spec-key { color: var(–dim); font-size: 11px; letter-spacing: 1px; }
-.spec-val { color: var(–text); font-weight: 600; font-family: ‘Share Tech Mono’, monospace; font-size: 11px; }
-.spec-val.highlight { color: var(–accent); }
-
-/* Architecture diagram */
-.arch-container { width: 100%; overflow-x: auto; }
-.arch-svg { min-width: 900px; }
-
-/* Status bar */
-.statusbar {
-display: flex; gap: 32px; padding: 10px 32px;
-border-top: 1px solid var(–border);
-background: var(–panel);
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 10px; color: var(–dim);
-position: relative;
-}
-.statusbar::before {
-content: ‘’;
-position: absolute; top: 0; left: 0; right: 0; height: 1px;
-background: linear-gradient(90deg, transparent, var(–accent), transparent);
-}
-.status-item { display: flex; gap: 8px; }
-.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(–accent3); margin-top: 2px; animation: blink 2s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-/* Tooltip */
-#tooltip {
-position: fixed;
-background: rgba(5,8,16,0.96);
-border: 1px solid var(–accent);
-padding: 10px 14px;
-font-family: ‘Share Tech Mono’, monospace;
-font-size: 10px;
-color: var(–accent);
-pointer-events: none;
-z-index: 9999;
-opacity: 0;
-transition: opacity 0.15s;
-max-width: 200px;
-line-height: 1.6;
-}
-#tooltip.show { opacity: 1; }
-#tooltip .tt-title { color: #fff; font-size: 11px; margin-bottom: 4px; font-family: ‘Rajdhani’, sans-serif; font-weight: 700; letter-spacing: 2px; }
-
-svg text { user-select: none; }
 </style>
-
 </head>
 <body>
 
-<header>
-  <div class="logo">REF: UAV-LRS-2000 // REV A</div>
-  <div class="title-block">
-    <h1>Surveillance UAV</h1>
-    <div class="sub">2000 KM RANGE — TECHNICAL DRAWING PACKAGE</div>
-  </div>
-  <div class="meta">
-    CLASS: CONCEPT DESIGN<br>
-    PROP: JET / TURBOPROP<br>
-    DATE: MAR 2026
-  </div>
-</header>
-
-<div class="tabs">
-  <div class="tab active" onclick="showTab('ortho')">01 — Orthographic Views</div>
-  <div class="tab" onclick="showTab('iso')">02 — Isometric View</div>
-  <div class="tab" onclick="showTab('arch')">03 — System Architecture</div>
-</div>
-
-<!-- ===================== PANEL 1: ORTHO ===================== -->
-
-<div class="panel active" id="tab-ortho">
-  <div class="layout-with-sidebar">
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">
+    <img src="https://egkhor.com.my/home/wp-content/uploads/2026/02/cropped-IMG_7598.png" alt="EGK Logo" class="nav-logo" onerror="this.style.display='none'">
     <div>
-      <!-- SIDE VIEW -->
-      <div class="drawing-area" style="height:320px; margin-bottom:3px; position:relative;">
-        <div class="view-label">SIDE VIEW — PROFILE</div>
-        <svg width="100%" height="100%" viewBox="0 0 820 320" preserveAspectRatio="xMidYMid meet" id="svg-side">
-          <defs>
-            <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#ff6b00" opacity="0.7"/>
-            </marker>
-            <marker id="arrow-b" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
-              <path d="M0,0 L6,3 L0,6 Z" fill="#ff6b00" opacity="0.7"/>
-            </marker>
-          </defs>
-
-```
-      <!-- Fuselage -->
-      <path d="M 100,155 Q 140,140 220,138 L 600,135 Q 650,135 680,145 L 710,155 Q 680,165 650,168 L 220,170 Q 150,172 100,155 Z"
-            fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <!-- Nose cone -->
-      <path d="M 100,155 Q 70,155 45,155" stroke="#00c8ff" stroke-width="1.5" fill="none"/>
-      <ellipse cx="45" cy="155" rx="10" ry="8" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Cockpit/sensor bulge -->
-      <path d="M 100,145 Q 120,128 155,125 Q 185,122 200,130 L 200,138" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-      <!-- EO/IR turret -->
-      <ellipse cx="160" cy="172" rx="22" ry="14" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-      <ellipse cx="160" cy="175" rx="12" ry="8" fill="#162840" stroke="#00c8ff" stroke-width="1"/>
-      <circle cx="160" cy="175" r="4" fill="#00c8ff" opacity="0.3"/>
-
-      <!-- Main wing -->
-      <path d="M 340,135 L 310,55 L 320,52 L 360,130" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <path d="M 340,135 L 370,55 L 382,57 L 365,132" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2" opacity="0.4"/>
-      <!-- Wing fuel hatches -->
-      <line x1="325" y1="95" x2="330" y2="92" stroke="#4a6080" stroke-width="1"/>
-      <line x1="335" y1="80" x2="340" y2="77" stroke="#4a6080" stroke-width="1"/>
-
-      <!-- Engine nacelle (on top center) -->
-      <path d="M 380,130 L 430,118 L 530,118 L 560,128 L 530,135 L 430,135 Z"
-            fill="#0a1828" stroke="#00c8ff" stroke-width="1.4"/>
-      <!-- Prop disk -->
-      <line x1="560" y1="112" x2="560" y2="142" stroke="#00c8ff" stroke-width="2" opacity="0.8"/>
-      <ellipse cx="560" cy="127" rx="3" ry="15" fill="none" stroke="#00c8ff" stroke-width="1" opacity="0.5"/>
-
-      <!-- Exhaust -->
-      <path d="M 560,126 L 580,122 L 600,124 L 580,130 Z" fill="#1a2a4a" stroke="#ff6b00" stroke-width="1"/>
-
-      <!-- Tail boom -->
-      <path d="M 650,145 L 710,153 L 760,152 L 710,157 L 650,158 Z"
-            fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-
-      <!-- Vertical tail -->
-      <path d="M 745,152 L 735,90 L 745,88 L 762,152 Z"
-            fill="#0e1e38" stroke="#00c8ff" stroke-width="1.4"/>
-      <!-- Rudder hinge -->
-      <line x1="750" y1="92" x2="756" y2="148" stroke="#4a6080" stroke-width="0.8"/>
-
-      <!-- Horizontal stab -->
-      <path d="M 742,152 L 720,175 L 728,178 L 748,156" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-      <path d="M 742,152 L 760,175 L 752,178 L 748,156" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.1" opacity="0.4"/>
-
-      <!-- Landing gear -->
-      <line x1="200" y1="170" x2="200" y2="215" stroke="#00c8ff" stroke-width="1.5"/>
-      <ellipse cx="200" cy="218" rx="16" ry="7" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2"/>
-      <line x1="450" y1="168" x2="450" y2="215" stroke="#00c8ff" stroke-width="1.5"/>
-      <ellipse cx="450" cy="218" rx="16" ry="7" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- SATCOM dome -->
-      <path d="M 480,130 Q 500,110 520,130" fill="#162840" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Dimension: overall length -->
-      <line x1="45" y1="250" x2="760" y2="250" stroke="#ff6b00" stroke-width="0.8" opacity="0.6" marker-start="url(#arrow-b)" marker-end="url(#arrow)"/>
-      <text x="400" y="264" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace" opacity="0.8">10.8 m (OVERALL LENGTH)</text>
-
-      <!-- Dimension: fuselage height -->
-      <line x1="30" y1="125" x2="30" y2="170" stroke="#ff6b00" stroke-width="0.8" opacity="0.6" marker-start="url(#arrow-b)" marker-end="url(#arrow)"/>
-      <text x="10" y="152" text-anchor="middle" fill="#ff6b00" font-size="8" font-family="'Share Tech Mono', monospace" opacity="0.8" transform="rotate(-90,10,152)">0.9 m</text>
-
-      <!-- Callout labels -->
-      <text x="55" y="145" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">NOSE/EO</text>
-      <text x="140" y="195" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">EO/IR</text>
-      <text x="310" y="45" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">WING</text>
-      <text x="430" y="108" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">TURBOPROP ENGINE</text>
-      <text x="490" y="107" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">/ SATCOM</text>
-      <text x="563" y="108" fill="#ff6b00" font-size="8" font-family="'Share Tech Mono', monospace">PROP</text>
-      <text x="718" y="78" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">V.STAB</text>
-      <text x="718" y="185" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">H.STAB</text>
-    </svg>
-
-    <!-- Interactive callouts -->
-    <div class="callout" style="left:14%;top:55%;" data-title="EO/IR Turret" data-desc="3-axis stabilised multi-spectral sensor. HD EO + MWIR thermal. ±90° pan / ±120° tilt. &lt;25 μrad jitter."></div>
-    <div class="callout" style="left:58%;top:30%;" data-title="Turboprop Engine" data-desc="Honeywell TPE331-10 class. 940 shp. Jet-A / JP-8. FADEC controlled. ~180 kg installed."></div>
-    <div class="callout" style="left:63%;top:25%;" data-title="SATCOM Dome" data-desc="Ku-band conformal SATCOM antenna. Beyond-LOS C2 &amp; ISR downlink. 10–200 Mbps."></div>
-    <div class="callout" style="left:38%;top:20%;" data-title="Main Wing" data-desc="High-aspect-ratio CFRP wing. 18–22 m span. Wet-wing fuel tanks. Aileron + flap surfaces."></div>
-    <div class="callout" style="left:89%;top:32%;" data-title="Vertical Stabiliser" data-desc="CFRP structure. Integrated rudder with servo actuator. Antenna fairings embedded."></div>
+      <div class="nav-name">EGK AERODYNAMIC</div>
+      <div class="nav-sub">MICROELECTRONICS SOLUTIONS GROUP SDN. BHD.</div>
+    </div>
   </div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#uavs">UAV Systems</a>
+    <a href="#bom">Bill of Materials</a>
+    <a href="#downloads">Downloads</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
 
-  <!-- TOP VIEW -->
-  <div class="drawing-area" style="height:260px; position:relative;">
-    <div class="view-label">TOP VIEW — PLAN</div>
-    <svg width="100%" height="100%" viewBox="0 0 820 260" preserveAspectRatio="xMidYMid meet">
-      <!-- Fuselage top -->
-      <path d="M 55,122 Q 80,108 160,105 L 620,108 Q 680,110 730,120 L 720,132 Q 660,140 620,140 L 160,140 Q 80,138 55,122 Z"
-            fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <!-- Nose -->
-      <ellipse cx="45" cy="122" rx="12" ry="10" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Wing plan (left) -->
-      <path d="M 290,108 L 100,40 L 110,36 L 320,100 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <!-- Wing plan (right) -->
-      <path d="M 290,140 L 100,205 L 110,209 L 320,148 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-
-      <!-- Aileron marks -->
-      <line x1="115" y1="42" x2="200" y2="66" stroke="#00ff88" stroke-width="1" opacity="0.6"/>
-      <line x1="115" y1="202" x2="200" y2="178" stroke="#00ff88" stroke-width="1" opacity="0.6"/>
-      <text x="95" y="35" fill="#00ff88" font-size="8" font-family="'Share Tech Mono', monospace" opacity="0.7">AILERON</text>
-      <text x="95" y="218" fill="#00ff88" font-size="8" font-family="'Share Tech Mono', monospace" opacity="0.7">AILERON</text>
-
-      <!-- Flap marks -->
-      <line x1="200" y1="66" x2="285" y2="100" stroke="#00ff88" stroke-width="1" opacity="0.4" stroke-dasharray="4,3"/>
-      <line x1="200" y1="178" x2="285" y2="145" stroke="#00ff88" stroke-width="1" opacity="0.4" stroke-dasharray="4,3"/>
-
-      <!-- Engine nacelle top -->
-      <path d="M 400,100 L 550,96 L 560,104 L 550,116 L 400,120 Z"
-            fill="#0a1828" stroke="#00c8ff" stroke-width="1.4"/>
-      <!-- Prop arc -->
-      <path d="M 558,94 A 18 18 0 0 1 558,126" fill="none" stroke="#00c8ff" stroke-width="1.5" opacity="0.8"/>
-
-      <!-- Horizontal stab top -->
-      <path d="M 695,115 L 730,80 L 740,83 L 710,120 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-      <path d="M 695,130 L 730,163 L 740,160 L 710,126 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-
-      <!-- V stab (edge-on) -->
-      <line x1="710" y1="112" x2="726" y2="112" stroke="#00c8ff" stroke-width="2.5"/>
-
-      <!-- EO/IR turret -->
-      <ellipse cx="155" cy="122" rx="20" ry="18" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-      <ellipse cx="155" cy="122" rx="10" ry="9" fill="#162840" stroke="#00c8ff" stroke-width="1"/>
-
-      <!-- SATCOM dome top -->
-      <ellipse cx="480" cy="110" rx="28" ry="12" fill="#162840" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Wingspan dimension -->
-      <line x1="108" y1="37" x2="108" y2="210" stroke="#ff6b00" stroke-width="0.8" opacity="0.6" marker-start="url(#arrow-b)" marker-end="url(#arrow)"/>
-      <text x="86" y="128" text-anchor="middle" fill="#ff6b00" font-size="9" font-family="'Share Tech Mono', monospace" opacity="0.8" transform="rotate(-90,86,128)">20 m WINGSPAN</text>
-
-      <text x="270" y="25" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">WING SPAR (CFRP)</text>
-      <text x="410" y="88" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">ENGINE</text>
-      <text x="458" y="100" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">SATCOM</text>
-    </svg>
-    <div class="callout" style="left:38%;top:40%;" data-title="Fuel Tanks (Wet Wing)" data-desc="Wet-wing construction. ~700–1000L Jet-A total. Port + starboard bladders + fuselage tank. Cross-feed valve."></div>
-    <div class="callout" style="left:55%;top:35%;" data-title="Engine Nacelle" data-desc="Turboprop on centreline spine. Engine-driven generator 5–10 kVA. FADEC. Halon fire suppression."></div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <img src="https://egkhor.com.my/home/wp-content/uploads/2026/02/cropped-IMG_7598.png" alt="EGK" class="hero-logo" onerror="this.style.display='none'">
+  <div class="hero-badge">EGK AERODYNAMIC DIVISION — UAV PROGRAMME</div>
+  <h1>LONG-RANGE <span>UAV</span><br>DESIGN PROGRAMME</h1>
+  <div class="hero-sub">2000 KM SURVEILLANCE · MALAYSIAN ENGINEERED · CONCEPT DESIGN 2026</div>
+  <div class="hero-desc">
+    EGK Aerodynamic Division, under EGK Microelectronics Solutions Group Sdn. Bhd., presents two long-range UAV platform concepts: a conventional turboprop surveillance system (UAV-LRS-2000) and a cost-optimised pusher-configuration platform (UAV-PSH-001) inspired by MALE-class designs.
+  </div>
+  <div class="hero-ctas">
+    <a href="#uavs" class="btn btn-gold">▶ VIEW UAV SYSTEMS</a>
+    <a href="#bom" class="btn btn-outline">BILL OF MATERIALS</a>
+    <a href="#downloads" class="btn btn-teal">↓ DOWNLOADS</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-val">2</span><div class="stat-key">UAV PLATFORMS</div></div>
+    <div class="stat"><span class="stat-val">2,000<small style="font-size:18px">km</small></span><div class="stat-key">DESIGN RANGE</div></div>
+    <div class="stat"><span class="stat-val">30<small style="font-size:18px">hr</small></span><div class="stat-key">MAX ENDURANCE</div></div>
+    <div class="stat"><span class="stat-val">2</span><div class="stat-key">FULL BOM SETS</div></div>
   </div>
 </div>
 
-<!-- FRONT VIEW + SPECS -->
-<div style="display:flex; flex-direction:column; gap:12px;">
-  <!-- Front view -->
-  <div class="drawing-area" style="height:320px; position:relative;">
-    <div class="view-label">FRONT VIEW</div>
-    <svg width="100%" height="100%" viewBox="0 0 280 320" preserveAspectRatio="xMidYMid meet">
-      <!-- Fuselage front -->
-      <ellipse cx="140" cy="160" rx="30" ry="28" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <!-- Nose probe -->
-      <circle cx="140" cy="155" r="18" fill="#162840" stroke="#00c8ff" stroke-width="1.2"/>
-      <circle cx="140" cy="155" r="8" fill="#0e1e38" stroke="#00c8ff" stroke-width="1"/>
-
-      <!-- Wings (front edge-on) -->
-      <path d="M 110,155 L 20,140 L 22,148 L 110,162 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-      <path d="M 170,155 L 260,140 L 258,148 L 170,162 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-
-      <!-- Engine nacelle front -->
-      <ellipse cx="140" cy="145" rx="20" ry="14" fill="#0a1828" stroke="#00c8ff" stroke-width="1.4"/>
-      <!-- Prop -->
-      <line x1="120" y1="145" x2="160" y2="145" stroke="#00c8ff" stroke-width="2.5" opacity="0.8"/>
-      <line x1="140" y1="125" x2="140" y2="165" stroke="#00c8ff" stroke-width="2.5" opacity="0.8"/>
-      <circle cx="140" cy="145" r="5" fill="#00c8ff" opacity="0.4"/>
-      <circle cx="140" cy="145" r="20" fill="none" stroke="#00c8ff" stroke-width="0.6" stroke-dasharray="3,4" opacity="0.4"/>
-
-      <!-- V stab (from front) -->
-      <path d="M 133,135 L 130,80 L 136,78 L 147,135 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-
-      <!-- H stab (from front) -->
-      <path d="M 130,195 L 80,200 L 80,208 L 130,205 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-      <path d="M 150,195 L 200,200 L 200,208 L 150,205 Z" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Landing gear -->
-      <line x1="125" y1="188" x2="120" y2="230" stroke="#00c8ff" stroke-width="1.5"/>
-      <ellipse cx="120" cy="234" rx="14" ry="6" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2"/>
-      <line x1="155" y1="188" x2="160" y2="230" stroke="#00c8ff" stroke-width="1.5"/>
-      <ellipse cx="160" cy="234" rx="14" ry="6" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- EO turret front -->
-      <ellipse cx="140" cy="186" rx="15" ry="12" fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2"/>
-
-      <!-- Wingspan dim -->
-      <line x1="22" y1="275" x2="258" y2="275" stroke="#ff6b00" stroke-width="0.8" opacity="0.6" marker-start="url(#arrow-b)" marker-end="url(#arrow)"/>
-      <text x="140" y="288" text-anchor="middle" fill="#ff6b00" font-size="8" font-family="'Share Tech Mono', monospace" opacity="0.8">20 m</text>
-
-      <!-- Dihedral angle label -->
-      <text x="22" y="136" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">~2° DIHEDRAL</text>
-    </svg>
-  </div>
-
-  <!-- Spec panel -->
-  <div class="spec-card">
-    <div class="spec-card-header">KEY PARAMETERS</div>
-    <div class="spec-row"><span class="spec-key">Range</span><span class="spec-val highlight">2,000 km</span></div>
-    <div class="spec-row"><span class="spec-key">Wingspan</span><span class="spec-val">18–22 m</span></div>
-    <div class="spec-row"><span class="spec-key">Length</span><span class="spec-val">~10.8 m</span></div>
-    <div class="spec-row"><span class="spec-key">MTOW</span><span class="spec-val">~1,500 kg</span></div>
-    <div class="spec-row"><span class="spec-key">Engine</span><span class="spec-val">TPE331 940 shp</span></div>
-    <div class="spec-row"><span class="spec-key">Cruise Alt</span><span class="spec-val">8–14 km</span></div>
-    <div class="spec-row"><span class="spec-key">Speed</span><span class="spec-val">200–280 km/h</span></div>
-    <div class="spec-row"><span class="spec-key">Endurance</span><span class="spec-val">20–30 hrs</span></div>
-    <div class="spec-row"><span class="spec-key">Fuel Load</span><span class="spec-val">~850 L Jet-A</span></div>
-    <div class="spec-row"><span class="spec-key">Payload</span><span class="spec-val">150–300 kg</span></div>
-  </div>
-</div>
-```
-
+<!-- ABOUT STRIP -->
+<div class="about-strip" id="overview">
+  <div class="about-inner">
+    <div class="about-text">
+      <span class="sec-label">ABOUT THIS PROGRAMME</span>
+      <h2 class="sec-title" style="margin-bottom:20px;">EGK Aerodynamic Division</h2>
+      <p>The EGK Aerodynamic Division operates under EGK Microelectronics Solutions Group Sdn. Bhd., developing indigenous UAV technology for surveillance, reconnaissance, and dual-use applications.</p>
+      <p>This programme presents two distinct long-range UAV concepts — each engineered for 2,000 km operational range — offering different trade-offs between capability, cost, and complexity.</p>
+      <div class="about-tags">
+        <span class="tag">SURVEILLANCE</span>
+        <span class="tag">RECONNAISSANCE</span>
+        <span class="tag">LONG ENDURANCE</span>
+        <span class="tag">MALAYSIAN DESIGN</span>
+        <span class="tag">MALE CLASS</span>
+        <span class="tag">CFRP AIRFRAME</span>
+      </div>
+    </div>
+    <div class="about-info">
+      <div class="info-row"><span class="info-k">Organisation</span><span class="info-v">EGK Microelectronics Solutions Group Sdn. Bhd.</span></div>
+      <div class="info-row"><span class="info-k">Division</span><span class="info-v">EGK Aerodynamic Division</span></div>
+      <div class="info-row"><span class="info-k">Location</span><span class="info-v">Malaysia</span></div>
+      <div class="info-row"><span class="info-k">Programme Status</span><span class="info-v">Concept Design — Rev A</span></div>
+      <div class="info-row"><span class="info-k">Date</span><span class="info-v">March 2026</span></div>
+      <div class="info-row"><span class="info-k">Platforms</span><span class="info-v">UAV-LRS-2000 · UAV-PSH-001</span></div>
+      <div class="info-row"><span class="info-k">Classification</span><span class="info-v">Concept / Unclassified</span></div>
+    </div>
   </div>
 </div>
 
-<!-- ===================== PANEL 2: ISO ===================== -->
+<!-- UAV SYSTEMS -->
+<section id="uavs">
+  <span class="sec-label">UAV SYSTEMS</span>
+  <h2 class="sec-title">Two Platform Concepts</h2>
+  <p class="sec-sub">Both platforms share the 2,000 km range objective but differ in configuration, cost profile, and propulsion architecture.</p>
 
-<div class="panel" id="tab-iso">
-  <div class="drawing-area" style="height:580px; position:relative;">
-    <div class="view-label">ISOMETRIC — 3/4 UPPER PORT VIEW</div>
-    <svg width="100%" height="100%" viewBox="0 0 960 580" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <linearGradient id="fuseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#1a3a5c"/>
-          <stop offset="100%" style="stop-color:#0a1828"/>
-        </linearGradient>
-        <linearGradient id="wingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color:#162840"/>
-          <stop offset="100%" style="stop-color:#0a1020"/>
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="2" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
+  <div class="uav-grid">
 
-```
-  <!-- Shadow -->
-  <ellipse cx="460" cy="530" rx="280" ry="18" fill="rgba(0,0,0,0.5)"/>
+    <!-- UAV 1: Conventional -->
+    <div class="uav-card">
+      <div class="uav-card-header">
+        <span class="uav-badge">UAV-LRS-2000</span>
+        <h3>CONVENTIONAL TURBOPROP</h3>
+        <div class="uav-sub">DORSAL ENGINE · CONVENTIONAL TAIL · HIGH ALTITUDE</div>
+      </div>
+      <div class="uav-drawing" style="height:200px;">
+        <svg width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+          <!-- Fuselage -->
+          <path d="M 65,95 Q 95,84 160,82 L 440,80 Q 480,80 510,88 L 530,95 Q 505,104 475,106 L 160,108 Q 95,108 65,95 Z" fill="#0d1830" stroke="#d4a820" stroke-width="1.4"/>
+          <path d="M 65,95 Q 46,95 28,95" stroke="#d4a820" stroke-width="1.4" fill="none"/>
+          <ellipse cx="24" cy="95" rx="8" ry="6" fill="#0a1020" stroke="#d4a820" stroke-width="1.1"/>
+          <!-- Canopy -->
+          <path d="M 68,82 Q 88,68 120,65 Q 148,62 162,70 L 165,80" fill="#101c30" stroke="#d4a820" stroke-width="1"/>
+          <!-- EO turret -->
+          <ellipse cx="115" cy="110" rx="16" ry="10" fill="#0a1020" stroke="#20c8d4" stroke-width="1.1"/>
+          <circle cx="115" cy="110" r="5" fill="#20c8d4" opacity=".3"/>
+          <!-- Port wing -->
+          <path d="M 250,80 L 220,28 L 230,25 L 268,74 Z" fill="#101c30" stroke="#d4a820" stroke-width="1.3"/>
+          <!-- Stbd wing ghost -->
+          <path d="M 250,80 L 272,28 L 284,30 L 264,76 Z" fill="#101c30" stroke="#d4a820" stroke-width=".8" opacity=".35"/>
+          <!-- Engine dorsal -->
+          <path d="M 310,76 L 415,70 L 430,78 L 430,88 L 415,95 L 310,98 Z" fill="#090f1c" stroke="#d4a820" stroke-width="1.3"/>
+          <!-- Prop (side = vertical line) -->
+          <line x1="432" y1="66" x2="432" y2="102" stroke="#d4a820" stroke-width="1.8" opacity=".8"/>
+          <path d="M 432,66 A 18 18 0 0 1 432,102" fill="none" stroke="#d4a820" stroke-width=".7" stroke-dasharray="3,3" opacity=".5"/>
+          <!-- SATCOM -->
+          <path d="M 358,74 Q 374,58 390,74" fill="#162840" stroke="#d4a820" stroke-width="1"/>
+          <!-- Tail boom -->
+          <path d="M 510,88 L 548,92 L 572,93 L 548,99 L 510,102 Z" fill="#0d1830" stroke="#d4a820" stroke-width="1.1"/>
+          <!-- V stab -->
+          <path d="M 560,92 L 546,48 L 554,46 L 572,92 Z" fill="#101c30" stroke="#d4a820" stroke-width="1.3"/>
+          <!-- H stab -->
+          <path d="M 558,92 L 538,112 L 545,116 L 562,97 Z" fill="#101c30" stroke="#d4a820" stroke-width="1.1"/>
+          <path d="M 558,92 L 576,112 L 569,116 L 562,97 Z" fill="#101c30" stroke="#d4a820" stroke-width=".9" opacity=".4"/>
+          <!-- Gear -->
+          <line x1="148" y1="108" x2="148" y2="145" stroke="#d4a820" stroke-width="1.2"/>
+          <ellipse cx="148" cy="148" rx="12" ry="5" fill="#070a14" stroke="#d4a820" stroke-width="1"/>
+          <line x1="330" y1="106" x2="330" y2="145" stroke="#d4a820" stroke-width="1.2"/>
+          <ellipse cx="330" cy="148" rx="12" ry="5" fill="#070a14" stroke="#d4a820" stroke-width="1"/>
+          <!-- Labels -->
+          <text x="100" y="128" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">EO/IR</text>
+          <text x="322" y="62" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">TURBOPROP</text>
+          <text x="436" y="88" fill="#d4a820" font-size="7" font-family="'Share Tech Mono',monospace">PROP</text>
+          <text x="550" y="42" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">V.STAB</text>
+          <text x="363" y="55" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">SATCOM</text>
+          <!-- Wingspan dim -->
+          <line x1="228" y1="170" x2="282" y2="170" stroke="#d4a820" stroke-width=".7" opacity=".5"/>
+          <text x="255" y="180" text-anchor="middle" fill="#d4a820" font-size="7" font-family="'Share Tech Mono',monospace" opacity=".7">~20m SPAN</text>
+        </svg>
+      </div>
+      <div class="uav-specs">
+        <div class="spec-grid">
+          <div class="spec-item"><span class="sk">Range</span><span class="sv hi">2,000 km</span></div>
+          <div class="spec-item"><span class="sk">Engine</span><span class="sv">TPE331 940shp</span></div>
+          <div class="spec-item"><span class="sk">Wingspan</span><span class="sv">18–22 m</span></div>
+          <div class="spec-item"><span class="sk">MTOW</span><span class="sv">~1,500 kg</span></div>
+          <div class="spec-item"><span class="sk">Altitude</span><span class="sv">8–14 km</span></div>
+          <div class="spec-item"><span class="sk">Endurance</span><span class="sv">20–30 hrs</span></div>
+          <div class="spec-item"><span class="sk">Fuel</span><span class="sv">~850 L Jet-A</span></div>
+          <div class="spec-item"><span class="sk">Payload</span><span class="sv">150–300 kg</span></div>
+        </div>
+      </div>
+      <div class="uav-card-footer">
+        <button class="btn btn-gold" onclick="showBOM('lrs')">VIEW BOM</button>
+        <button class="btn btn-outline" onclick="downloadDoc('lrs')">↓ DOWNLOAD DOCX</button>
+        <a href="UAV_2000km_Technical_Drawing.html" target="_blank" class="btn btn-teal">DRAWING</a>
+      </div>
+    </div>
 
-  <!-- === PORT WING (large) === -->
-  <path d="M 330,280 L 60,170 L 75,155 L 365,262 Z"
-        fill="url(#wingGrad)" stroke="#00c8ff" stroke-width="1.8"/>
-  <!-- Wing leading edge highlight -->
-  <path d="M 330,280 L 60,170" stroke="#00c8ff" stroke-width="0.5" opacity="0.4"/>
-  <!-- Aileron -->
-  <path d="M 80,165 L 190,210 L 195,220 L 82,175 Z"
-        fill="#0e1e30" stroke="#00ff88" stroke-width="1.2"/>
-  <!-- Flap -->
-  <path d="M 190,210 L 310,254 L 315,265 L 195,220 Z"
-        fill="#0e1e30" stroke="#00ff88" stroke-width="1" stroke-dasharray="5,3"/>
-  <!-- Wing tip nav light -->
-  <circle cx="62" cy="163" r="5" fill="#00ff88" opacity="0.8" filter="url(#glow)"/>
+    <!-- UAV 2: Pusher -->
+    <div class="uav-card">
+      <div class="uav-card-header">
+        <span class="uav-badge" style="background:rgba(32,200,212,.1);border-color:var(--teal);color:var(--teal);">UAV-PSH-001</span>
+        <h3>PUSHER CONFIGURATION</h3>
+        <div class="uav-sub" style="color:var(--gold);">REAR PROP · INVERTED-V TAIL · COST OPTIMISED</div>
+      </div>
+      <div class="uav-drawing" style="height:200px;">
+        <svg width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+          <!-- Fuselage -->
+          <path d="M 60,95 Q 90,84 155,82 L 480,80 Q 525,80 555,90 L 552,100 Q 520,108 480,108 L 155,108 Q 90,108 60,95 Z" fill="#0d1830" stroke="#20c8d4" stroke-width="1.4"/>
+          <path d="M 60,95 Q 40,95 22,95" stroke="#20c8d4" stroke-width="1.4" fill="none"/>
+          <ellipse cx="18" cy="95" rx="8" ry="6" fill="#0a1020" stroke="#20c8d4" stroke-width="1.1"/>
+          <!-- Pitot -->
+          <line x1="18" y1="89" x2="16" y2="76" stroke="#20c8d4" stroke-width="1.2"/>
+          <!-- Canopy -->
+          <path d="M 64,82 Q 84,68 115,65 Q 143,62 158,70 L 160,80" fill="#101c30" stroke="#20c8d4" stroke-width="1"/>
+          <!-- EO turret BELLY (pusher = clear nose) -->
+          <ellipse cx="108" cy="110" rx="18" ry="11" fill="#0a1020" stroke="#20c8d4" stroke-width="1.2"/>
+          <ellipse cx="107" cy="111" rx="9" ry="6" fill="#0e1820" stroke="#20c8d4" stroke-width="1"/>
+          <circle cx="107" cy="111" r="4" fill="#20c8d4" opacity=".35"/>
+          <!-- Port wing -->
+          <path d="M 240,80 L 205,22 L 216,18 L 258,74 Z" fill="#101c30" stroke="#20c8d4" stroke-width="1.4"/>
+          <!-- Stbd wing ghost -->
+          <path d="M 240,80 L 265,22 L 278,24 L 258,76 Z" fill="#101c30" stroke="#20c8d4" stroke-width=".9" opacity=".35"/>
+          <!-- Aileron hinge -->
+          <line x1="210" y1="25" x2="240" y2="68" stroke="#d4a820" stroke-width=".8" stroke-dasharray="3,3"/>
+          <!-- Engine cowl REAR -->
+          <path d="M 474,80 L 540,76 L 556,87 L 556,103 L 540,110 L 474,108 Z" fill="#090f1c" stroke="#20c8d4" stroke-width="1.4"/>
+          <!-- Pusher prop disk -->
+          <line x1="558" y1="78" x2="558" y2="110" stroke="#20c8d4" stroke-width="2" opacity=".85"/>
+          <path d="M 558,78 A 16 16 0 0 1 558,110" fill="none" stroke="#20c8d4" stroke-width=".8" stroke-dasharray="3,3" opacity=".55"/>
+          <!-- Spinner -->
+          <path d="M 556,91 L 572,94 L 556,99 Z" fill="#20c8d4" opacity=".3"/>
+          <!-- Inverted-V port fin (goes DOWN-FORWARD) -->
+          <path d="M 540,80 L 516,42 L 524,40 L 550,78 Z" fill="#101c30" stroke="#20c8d4" stroke-width="1.4"/>
+          <!-- Ruddevator hinge -->
+          <line x1="519" y1="44" x2="544" y2="78" stroke="#d4a820" stroke-width=".8" stroke-dasharray="3,3"/>
+          <!-- Stbd inv-V ghost -->
+          <path d="M 540,104 L 516,142 L 524,145 L 550,106 Z" fill="#101c30" stroke="#20c8d4" stroke-width="1.1" opacity=".45"/>
+          <!-- Gear -->
+          <line x1="140" y1="108" x2="140" y2="145" stroke="#20c8d4" stroke-width="1.2"/>
+          <ellipse cx="140" cy="148" rx="12" ry="5" fill="#070a14" stroke="#20c8d4" stroke-width="1"/>
+          <line x1="310" y1="106" x2="310" y2="145" stroke="#20c8d4" stroke-width="1.2"/>
+          <ellipse cx="310" cy="148" rx="12" ry="5" fill="#070a14" stroke="#20c8d4" stroke-width="1"/>
+          <!-- Labels -->
+          <text x="88" y="128" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">EO/IR</text>
+          <text x="478" y="70" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">ENGINE</text>
+          <text x="561" y="95" fill="#20c8d4" font-size="7" font-family="'Share Tech Mono',monospace">PROP</text>
+          <text x="510" y="36" fill="#3c5470" font-size="7" font-family="'Share Tech Mono',monospace">INV-V FIN</text>
+          <text x="200" y="14" fill="#d4a820" font-size="7" font-family="'Share Tech Mono',monospace">AILERON</text>
+          <!-- Span dim -->
+          <line x1="210" y1="165" x2="275" y2="165" stroke="#20c8d4" stroke-width=".7" opacity=".5"/>
+          <text x="242" y="175" text-anchor="middle" fill="#20c8d4" font-size="7" font-family="'Share Tech Mono',monospace" opacity=".7">~18m SPAN</text>
+          <!-- Pusher label -->
+          <text x="300" y="172" text-anchor="middle" fill="#d4a820" font-size="8" font-family="'Share Tech Mono',monospace" opacity=".6">★ PUSHER — CLEAN NOSE FOR SENSORS ★</text>
+        </svg>
+      </div>
+      <div class="uav-specs">
+        <div class="spec-grid">
+          <div class="spec-item"><span class="sk">Range</span><span class="sv hi">~2,000 km</span></div>
+          <div class="spec-item"><span class="sk">Engine</span><span class="sv">100–200 hp</span></div>
+          <div class="spec-item"><span class="sk">Wingspan</span><span class="sv">16–20 m</span></div>
+          <div class="spec-item"><span class="sk">MTOW</span><span class="sv">600–900 kg</span></div>
+          <div class="spec-item"><span class="sk">Altitude</span><span class="sv">5–8 km</span></div>
+          <div class="spec-item"><span class="sk">Endurance</span><span class="sv">24–36 hrs</span></div>
+          <div class="spec-item"><span class="sk">Fuel</span><span class="sv">~700 L</span></div>
+          <div class="spec-item"><span class="sk">Payload</span><span class="sv">50–150 kg</span></div>
+        </div>
+      </div>
+      <div class="uav-card-footer">
+        <button class="btn btn-gold" onclick="showBOM('psh')">VIEW BOM</button>
+        <button class="btn btn-outline" style="color:var(--teal);border-color:var(--teal);" onclick="downloadDoc('psh')">↓ DOWNLOAD DOCX</button>
+        <a href="UAV_Pusher_InvertedV_Drawing.html" target="_blank" class="btn btn-teal">DRAWING</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- === STBD WING (perspective, partial) === -->
-  <path d="M 365,262 L 530,310 L 545,295 L 370,250 Z"
-        fill="url(#wingGrad)" stroke="#00c8ff" stroke-width="1.4" opacity="0.7"/>
-  <circle cx="548" cy="292" r="4" fill="#ff4444" opacity="0.7" filter="url(#glow)"/>
+<!-- BOM SECTION -->
+<div class="bom-section" id="bom" style="padding:80px 40px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <span class="sec-label">BILL OF MATERIALS</span>
+    <h2 class="sec-title">Component Lists</h2>
+    <p class="sec-sub">Full BOM for both UAV platforms. Switch between systems using the tabs below.</p>
 
-  <!-- === FUSELAGE === -->
-  <!-- Main body top surface -->
-  <path d="M 200,230 Q 250,205 330,200 L 620,195 Q 680,196 730,210 L 750,240 Q 700,260 640,265 L 320,268 Q 240,268 200,252 Z"
-        fill="url(#fuseGrad)" stroke="#00c8ff" stroke-width="1.8"/>
-  <!-- Fuselage lower/side -->
-  <path d="M 200,252 Q 240,268 320,268 L 640,265 L 750,240 L 760,265 Q 700,290 640,295 L 320,298 Q 240,298 200,280 Z"
-        fill="#0a1420" stroke="#00c8ff" stroke-width="1.2"/>
+    <div class="bom-tabs">
+      <div class="bom-tab active" id="btab-lrs" onclick="switchBOM('lrs')">UAV-LRS-2000 — TURBOPROP</div>
+      <div class="bom-tab" id="btab-psh" onclick="switchBOM('psh')">UAV-PSH-001 — PUSHER</div>
+    </div>
 
-  <!-- Nose -->
-  <path d="M 200,230 Q 160,240 120,248 Q 100,252 90,255"
-        stroke="#00c8ff" stroke-width="1.8" fill="none"/>
-  <path d="M 200,252 Q 160,262 90,255"
-        stroke="#00c8ff" stroke-width="1.2" fill="none"/>
-  <ellipse cx="88" cy="254" rx="14" ry="11" fill="#0a1828" stroke="#00c8ff" stroke-width="1.5" transform="rotate(-5,88,254)"/>
+    <!-- LRS BOM -->
+    <div class="bom-panel active" id="bpanel-lrs">
+      <table class="bom-table">
+        <thead><tr><th>ITEM</th><th>COMPONENT</th><th>SPECIFICATION</th><th>QTY</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr><td colspan="5" class="bom-cat">AIRFRAME</td></tr>
+          <tr><td>AF-001</td><td>Nose cone / fwd fuselage</td><td>CFRP monocoque</td><td class="qty-badge" style="display:table-cell"><span class="qty-badge">1</span></td><td>Sensor + avionics bay, nose gear well</td></tr>
+          <tr><td>AF-002</td><td>Centre fuselage</td><td>CFRP / Al 7075 hybrid</td><td><span class="qty-badge">1</span></td><td>Main fuel tank, wing attach, main gear</td></tr>
+          <tr><td>AF-003</td><td>Aft fuselage / tail boom</td><td>CFRP</td><td><span class="qty-badge">1</span></td><td>Engine mount forward face, tail attach</td></tr>
+          <tr><td>AF-004</td><td>Main wing spar</td><td>CFRP unidirectional 18–22 m</td><td><span class="qty-badge">1</span></td><td>Wet wing fuel tanks integrated</td></tr>
+          <tr><td>AF-005</td><td>Wing skin panels</td><td>CFRP / Nomex honeycomb</td><td><span class="qty-badge">4</span></td><td>Upper + lower, port + stbd</td></tr>
+          <tr><td>AF-006</td><td>Vertical stabiliser</td><td>CFRP</td><td><span class="qty-badge">1</span></td><td>Integral rudder, antenna fairings</td></tr>
+          <tr><td>AF-007</td><td>Horizontal stabiliser</td><td>CFRP</td><td><span class="qty-badge">1</span></td><td>Elevator attached</td></tr>
+          <tr><td>AF-008</td><td>Engine nacelle / cowling</td><td>Fiberglass / CFRP dorsal mount</td><td><span class="qty-badge">1</span></td><td>Turboprop installation</td></tr>
+          <tr><td colspan="5" class="bom-cat">PROPULSION</td></tr>
+          <tr><td>PR-001</td><td>Turboprop engine</td><td>Honeywell TPE331-10, 940 shp</td><td><span class="qty-badge">1</span></td><td>Dorsal centreline mount, Jet-A / JP-8</td></tr>
+          <tr><td>PR-002</td><td>Propeller</td><td>3-blade constant-speed composite, 2.0–2.6 m</td><td><span class="qty-badge">1</span></td><td>Tractor configuration</td></tr>
+          <tr><td>PR-003</td><td>FADEC / ECU</td><td>Full Authority Digital Engine Control</td><td><span class="qty-badge">1</span></td><td>Dual-channel redundant</td></tr>
+          <tr><td>PR-004</td><td>Fuel system</td><td>Wet wing + fuselage bladder, ~850 L Jet-A</td><td><span class="qty-badge">1 set</span></td><td>Cross-feed valve, vent system</td></tr>
+          <tr><td>PR-005</td><td>Fuel pump</td><td>Engine-driven + electric boost</td><td><span class="qty-badge">2</span></td><td>Redundant pair</td></tr>
+          <tr><td>PR-006</td><td>Fire suppression</td><td>Halon-replacement, detection loop</td><td><span class="qty-badge">1</span></td><td>Engine bay, auto/manual trigger</td></tr>
+          <tr><td colspan="5" class="bom-cat">AVIONICS & FLIGHT CONTROL</td></tr>
+          <tr><td>AV-001</td><td>Flight Control Computer</td><td>Dual-channel FCC, MIL-STD-1553B</td><td><span class="qty-badge">1</span></td><td>Primary autopilot + guidance</td></tr>
+          <tr><td>AV-002</td><td>INS / IMU</td><td>Ring-laser gyro or MEMS INS</td><td><span class="qty-badge">1</span></td><td>Dead-reckoning attitude + position</td></tr>
+          <tr><td>AV-003</td><td>GPS / GNSS Receiver</td><td>Multi-constellation GPS+GLONASS+Galileo</td><td><span class="qty-badge">1</span></td><td>Primary position fix</td></tr>
+          <tr><td>AV-004</td><td>Air Data Computer</td><td>Pitot-static probe + dual ADC</td><td><span class="qty-badge">2</span></td><td>Airspeed, altitude, AoA, sideslip</td></tr>
+          <tr><td>AV-005</td><td>Radar Altimeter</td><td>Honeywell AA-300 class</td><td><span class="qty-badge">1</span></td><td>Terrain-following / low-altitude ops</td></tr>
+          <tr><td>AV-006</td><td>TCAS II / ADS-B</td><td>TCAS II + ADS-B In/Out transponder</td><td><span class="qty-badge">1</span></td><td>ICAO airspace integration</td></tr>
+          <tr><td>AV-007</td><td>Servo actuators</td><td>High-torque digital servo</td><td><span class="qty-badge">6</span></td><td>Aileron×2, elevator×2, rudder×1, flap×1</td></tr>
+          <tr><td>AV-008</td><td>Flight Data Recorder</td><td>Crash-protected solid-state</td><td><span class="qty-badge">1</span></td><td>Mission log + HUMS data</td></tr>
+          <tr><td colspan="5" class="bom-cat">COMMUNICATIONS</td></tr>
+          <tr><td>CM-001</td><td>SATCOM antenna</td><td>Ku-band conformal / dorsal radome</td><td><span class="qty-badge">1</span></td><td>Beyond-LOS C2 + ISR downlink</td></tr>
+          <tr><td>CM-002</td><td>LOS datalink</td><td>UHF/L-band directional, CDL class</td><td><span class="qty-badge">1</span></td><td>Up to ~300 km</td></tr>
+          <tr><td>CM-003</td><td>VHF/UHF ATC radio</td><td>ICAO standard AM/FM</td><td><span class="qty-badge">1</span></td><td>ATC voice + transponder</td></tr>
+          <tr><td>CM-004</td><td>HF radio backup</td><td>HF modem, 2–30 MHz</td><td><span class="qty-badge">1</span></td><td>Long-range degraded C2 fallback</td></tr>
+          <tr><td>CM-005</td><td>COMSEC / encryption</td><td>AES-256 / Type-1 modules</td><td><span class="qty-badge">1 set</span></td><td>All links encrypted</td></tr>
+          <tr><td colspan="5" class="bom-cat">PAYLOAD</td></tr>
+          <tr><td>PL-001</td><td>EO/IR gimbal turret</td><td>3-axis stabilised, HD + MWIR, ±90°/±120°</td><td><span class="qty-badge">1</span></td><td>Primary ISR sensor</td></tr>
+          <tr><td>PL-002</td><td>SAR radar (optional)</td><td>X-band, 1–0.1 m res, STRIPMAP/SPOT</td><td><span class="qty-badge">1</span></td><td>All-weather imaging</td></tr>
+          <tr><td>PL-003</td><td>SIGINT antenna</td><td>Broadband passive RF, DF</td><td><span class="qty-badge">1</span></td><td>Electronic intelligence</td></tr>
+          <tr><td>PL-004</td><td>Laser rangefinder</td><td>Class 3B/4, co-bore-sighted</td><td><span class="qty-badge">1</span></td><td>Target geo-location</td></tr>
+          <tr><td>PL-005</td><td>Payload computer</td><td>GPU-accelerated SBC, H.264/H.265</td><td><span class="qty-badge">1</span></td><td>Real-time video compression + fusion</td></tr>
+          <tr><td colspan="5" class="bom-cat">POWER & ELECTRICAL</td></tr>
+          <tr><td>PW-001</td><td>Main alternator</td><td>Engine-driven AC, 5–10 kVA</td><td><span class="qty-badge">1</span></td><td>Primary power generation</td></tr>
+          <tr><td>PW-002</td><td>28 VDC power bus</td><td>Solid-state power controller, fault isolation</td><td><span class="qty-badge">1</span></td><td>Primary avionics bus</td></tr>
+          <tr><td>PW-003</td><td>115 VAC inverter</td><td>400 Hz, avionics-grade</td><td><span class="qty-badge">1</span></td><td>AC avionics bus</td></tr>
+          <tr><td>PW-004</td><td>Emergency battery</td><td>Li-ion 28V, ≥30 min flight-critical</td><td><span class="qty-badge">1</span></td><td>Engine-out power continuity</td></tr>
+          <tr><td colspan="5" class="bom-cat">LANDING GEAR</td></tr>
+          <tr><td>LG-001</td><td>Nose gear strut</td><td>Oleo-pneumatic, steerable ±35°</td><td><span class="qty-badge">1</span></td><td>Retractable, nose wheel steering</td></tr>
+          <tr><td>LG-002</td><td>Main gear struts</td><td>Oleo-pneumatic, retractable</td><td><span class="qty-badge">2</span></td><td>Port + stbd main gear</td></tr>
+          <tr><td>LG-003</td><td>Wheel brakes</td><td>Carbon disc + ABS controller</td><td><span class="qty-badge">2</span></td><td>Anti-skid braking</td></tr>
+          <tr><td>LG-004</td><td>Emergency parachute</td><td>Ballistic deploy, MTOW class</td><td><span class="qty-badge">1</span></td><td>Optional — confined area ops</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- Spine / dorsal surface line -->
-  <path d="M 200,230 L 620,195" stroke="#00c8ff" stroke-width="0.5" opacity="0.3" stroke-dasharray="8,5"/>
-
-  <!-- EO/IR turret -->
-  <ellipse cx="250" cy="278" rx="30" ry="20" fill="#0a1420" stroke="#00c8ff" stroke-width="1.3" transform="rotate(-10,250,278)"/>
-  <ellipse cx="248" cy="282" rx="16" ry="11" fill="#162840" stroke="#00c8ff" stroke-width="1"/>
-  <circle cx="247" cy="282" r="6" fill="#00c8ff" opacity="0.2"/>
-  <circle cx="247" cy="282" r="3" fill="#00c8ff" opacity="0.5"/>
-
-  <!-- SATCOM dome -->
-  <path d="M 500,192 Q 535,170 570,192" fill="#162840" stroke="#00c8ff" stroke-width="1.4"/>
-  <ellipse cx="535" cy="195" rx="35" ry="8" fill="#162840" stroke="#00c8ff" stroke-width="1" opacity="0.6"/>
-
-  <!-- === ENGINE === -->
-  <path d="M 420,195 L 600,190 L 615,210 L 615,225 L 600,240 L 420,244 L 408,230 L 408,215 Z"
-        fill="#0a1828" stroke="#00c8ff" stroke-width="1.6"/>
-  <!-- Engine intake -->
-  <ellipse cx="410" cy="222" rx="12" ry="18" fill="#050810" stroke="#00c8ff" stroke-width="1.5"/>
-  <!-- Prop disk -->
-  <ellipse cx="617" cy="218" rx="8" ry="28" fill="none" stroke="#00c8ff" stroke-width="1" opacity="0.7"/>
-  <!-- Prop blades -->
-  <line x1="617" y1="190" x2="617" y2="246" stroke="#00c8ff" stroke-width="3" opacity="0.8"/>
-  <line x1="604" y1="205" x2="630" y2="231" stroke="#00c8ff" stroke-width="3" opacity="0.8"/>
-  <line x1="630" y1="205" x2="604" y2="231" stroke="#00c8ff" stroke-width="3" opacity="0.8"/>
-  <circle cx="617" cy="218" r="6" fill="#00c8ff" opacity="0.4"/>
-  <!-- Exhaust glow -->
-  <path d="M 617,217 L 650,212 L 660,218 L 650,224 Z" fill="#ff6b00" opacity="0.3"/>
-  <path d="M 617,217 L 660,218" stroke="#ff6b00" stroke-width="1" opacity="0.5"/>
-
-  <!-- === TAIL SECTION === -->
-  <!-- Tail boom -->
-  <path d="M 730,210 L 800,218 L 840,220 L 800,232 L 730,240 Z"
-        fill="#0e1e38" stroke="#00c8ff" stroke-width="1.4"/>
-  <!-- Vertical fin -->
-  <path d="M 820,218 L 800,140 L 815,137 L 845,218 Z"
-        fill="#0e1e38" stroke="#00c8ff" stroke-width="1.5"/>
-  <!-- Rudder -->
-  <path d="M 830,145 L 840,218 L 845,218 L 836,145 Z"
-        fill="#0a1020" stroke="#00c8ff" stroke-width="0.8"/>
-  <!-- H stab port -->
-  <path d="M 826,220 L 770,255 L 778,268 L 838,232 Z"
-        fill="#0e1e38" stroke="#00c8ff" stroke-width="1.3"/>
-  <!-- H stab stbd -->
-  <path d="M 838,220 L 880,248 L 873,262 L 840,232 Z"
-        fill="#0e1e38" stroke="#00c8ff" stroke-width="1.2" opacity="0.6"/>
-  <!-- Elevator hinge line -->
-  <line x1="775" y1="260" x2="838" y2="228" stroke="#4a6080" stroke-width="0.8"/>
-
-  <!-- === LANDING GEAR === -->
-  <!-- Nose gear -->
-  <line x1="195" y1="280" x2="190" y2="340" stroke="#00c8ff" stroke-width="1.8"/>
-  <line x1="190" y1="340" x2="200" y2="340" stroke="#00c8ff" stroke-width="3"/>
-  <ellipse cx="196" cy="344" rx="18" ry="9" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2" transform="rotate(-5,196,344)"/>
-  <!-- Main gear port -->
-  <line x1="400" y1="285" x2="390" y2="358" stroke="#00c8ff" stroke-width="1.8"/>
-  <ellipse cx="390" cy="363" rx="20" ry="8" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2"/>
-  <!-- Main gear stbd (partial) -->
-  <line x1="460" y1="278" x2="470" y2="340" stroke="#00c8ff" stroke-width="1.5" opacity="0.5"/>
-
-  <!-- === CALLOUT LINES & LABELS === -->
-  <!-- Nose -->
-  <line x1="88" y1="244" x2="60" y2="200" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="10" y="196" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">NOSE / PITOT</text>
-
-  <!-- EO/IR -->
-  <line x1="250" y1="298" x2="220" y2="380" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="155" y="394" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">EO/IR TURRET</text>
-
-  <!-- Engine -->
-  <line x1="510" y1="190" x2="490" y2="140" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="410" y="134" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">TURBOPROP / NACELLE</text>
-
-  <!-- SATCOM -->
-  <line x1="535" y1="178" x2="560" y2="130" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="562" y="126" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">SATCOM DOME</text>
-
-  <!-- Wing -->
-  <line x1="160" y1="168" x2="140" y2="120" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="40" y="114" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">PORT WING — 20 m SPAN</text>
-
-  <!-- V stab -->
-  <line x1="810" y1="140" x2="840" y2="100" stroke="#4a6080" stroke-width="0.8" stroke-dasharray="3,3"/>
-  <text x="843" y="96" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace">VERT. STAB / RUDDER</text>
-
-  <!-- Aileron -->
-  <text x="88" y="195" fill="#00ff88" font-size="8" font-family="'Share Tech Mono', monospace">AILERON</text>
-  <!-- Exhaust -->
-  <text x="655" y="215" fill="#ff6b00" font-size="8" font-family="'Share Tech Mono', monospace">EXHAUST</text>
-
-  <!-- Scale bar -->
-  <line x1="60" y1="490" x2="260" y2="490" stroke="#ff6b00" stroke-width="1.5" opacity="0.7"/>
-  <line x1="60" y1="484" x2="60" y2="496" stroke="#ff6b00" stroke-width="1.5" opacity="0.7"/>
-  <line x1="260" y1="484" x2="260" y2="496" stroke="#ff6b00" stroke-width="1.5" opacity="0.7"/>
-  <text x="160" y="508" text-anchor="middle" fill="#ff6b00" font-size="9" font-family="'Share Tech Mono', monospace" opacity="0.8">APPROX. 5 m</text>
-  <text x="160" y="520" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">NOT TO EXACT SCALE</text>
-</svg>
-
-<!-- Interactive callouts -->
-<div class="callout" style="left:27%;top:52%;" data-title="EO/IR Sensor Turret" data-desc="Multi-spectral imaging pod. 3-axis gyro-stabilised. Day/night capability. Laser rangefinder co-bore-sighted."></div>
-<div class="callout" style="left:55%;top:32%;" data-title="Engine + Propeller" data-desc="Turboprop on dorsal centreline. 3-blade constant-speed prop. FADEC engine management. ~940 shp at altitude."></div>
-<div class="callout" style="left:84%;top:25%;" data-title="Vertical Fin" data-desc="CFRP construction. Integral rudder. Antenna fairings for VHF/UHF. ~3.5 m height from boom."></div>
-<div class="callout" style="left:8%;top:30%;" data-title="Wing Tip Nav Light" data-desc="Port = Red. ICAO compliant for non-segregated airspace. Also houses wingtip pitot / AoA sensor."></div>
-```
-
+    <!-- PSH BOM -->
+    <div class="bom-panel" id="bpanel-psh">
+      <table class="bom-table">
+        <thead><tr><th>ITEM</th><th>COMPONENT</th><th>SPECIFICATION</th><th>QTY</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr><td colspan="5" class="bom-cat">AIRFRAME</td></tr>
+          <tr><td>AF-001</td><td>Nose cone / fwd fuselage</td><td>CFRP monocoque</td><td><span class="qty-badge">1</span></td><td>Sensor bay ONLY — no engine obstruction</td></tr>
+          <tr><td>AF-002</td><td>Centre fuselage</td><td>CFRP / Al 7075 hybrid</td><td><span class="qty-badge">1</span></td><td>Main fuel, wing attach, main gear bay</td></tr>
+          <tr><td>AF-003</td><td>Aft fuselage / engine bay</td><td>CFRP reinforced</td><td><span class="qty-badge">1</span></td><td>Rear bulkhead engine mount, prop clearance</td></tr>
+          <tr><td>AF-004</td><td>Main wing spar</td><td>CFRP unidirectional 16–20 m</td><td><span class="qty-badge">1</span></td><td>Wet fuel wing, high-aspect-ratio</td></tr>
+          <tr><td>AF-005</td><td>Wing skin panels</td><td>CFRP / Nomex honeycomb</td><td><span class="qty-badge">4</span></td><td>Upper + lower, port + stbd, with fuel sealing</td></tr>
+          <tr><td>AF-006</td><td>Inverted-V fin (port)</td><td>CFRP, ~45° cant angle</td><td><span class="qty-badge">1</span></td><td>Combined ruddevator (rudder + elevator)</td></tr>
+          <tr><td>AF-007</td><td>Inverted-V fin (stbd)</td><td>CFRP, ~45° cant angle</td><td><span class="qty-badge">1</span></td><td>Combined ruddevator — NO separate H-stab</td></tr>
+          <tr><td>AF-008</td><td>Engine cowling (rear)</td><td>Fiberglass / CFRP</td><td><span class="qty-badge">1</span></td><td>Pusher prop cutout, exhaust exit aft</td></tr>
+          <tr><td colspan="5" class="bom-cat">PROPULSION (PUSHER)</td></tr>
+          <tr><td>PR-001</td><td>Engine — primary option</td><td>Rotax 915 iS, 141 hp / 105 kW</td><td><span class="qty-badge">1</span></td><td>Rear centreline mount, AvGas / Mogas</td></tr>
+          <tr><td>PR-001B</td><td>Engine — alt option</td><td>PBS TE400 turboprop, ~160 hp</td><td><span class="qty-badge">1</span></td><td>Higher altitude performance option</td></tr>
+          <tr><td>PR-002</td><td>Pusher propeller</td><td>3-blade constant-speed composite, 1.8–2.2 m</td><td><span class="qty-badge">1</span></td><td>Rear-facing pusher orientation</td></tr>
+          <tr><td>PR-003</td><td>Prop governor</td><td>MT-Propeller or Hartzell class</td><td><span class="qty-badge">1</span></td><td>Automatic pitch control</td></tr>
+          <tr><td>PR-004</td><td>FADEC / EFI</td><td>Dual-channel electronic fuel injection</td><td><span class="qty-badge">1</span></td><td>Rotax iS native FADEC</td></tr>
+          <tr><td>PR-005</td><td>Fuel system</td><td>Wet wing + centre fuselage tank, ~700 L</td><td><span class="qty-badge">1 set</span></td><td>Cross-feed valve, vent, fuel cap×4</td></tr>
+          <tr><td>PR-006</td><td>Fuel pump</td><td>Engine-driven + electric boost</td><td><span class="qty-badge">2</span></td><td>Redundant pair</td></tr>
+          <tr><td>PR-007</td><td>Oil cooler</td><td>Air-cooled side cowl exchanger</td><td><span class="qty-badge">1</span></td><td>Rear cowl mount</td></tr>
+          <tr><td>PR-008</td><td>Exhaust system</td><td>Stainless steel, rear exit</td><td><span class="qty-badge">1</span></td><td>Optional IR suppressor baffles</td></tr>
+          <tr><td>PR-009</td><td>Fire suppression</td><td>Halon-replacement, thermal detection loop</td><td><span class="qty-badge">1</span></td><td>Engine bay auto/manual</td></tr>
+          <tr><td>PR-010</td><td>Prop spinner</td><td>Composite + machined Al backing plate</td><td><span class="qty-badge">1</span></td><td>Aerodynamic hub fairing</td></tr>
+          <tr><td colspan="5" class="bom-cat">AVIONICS & FLIGHT CONTROL</td></tr>
+          <tr><td>AV-001</td><td>Flight Control Computer</td><td>Dual-channel FCC, MIL-STD-1553B</td><td><span class="qty-badge">1</span></td><td>Autopilot + guidance</td></tr>
+          <tr><td>AV-002</td><td>INS / IMU</td><td>MEMS INS or ring-laser gyro</td><td><span class="qty-badge">1</span></td><td>Dead-reckoning</td></tr>
+          <tr><td>AV-003</td><td>GPS / GNSS Receiver</td><td>GPS + GLONASS multi-constellation</td><td><span class="qty-badge">1</span></td><td>Primary position</td></tr>
+          <tr><td>AV-004</td><td>Air Data Computer</td><td>Pitot-static + dual ADC</td><td><span class="qty-badge">2</span></td><td>Airspeed, altitude, AoA</td></tr>
+          <tr><td>AV-005</td><td>Radar Altimeter</td><td>Low-altitude terrain sensing</td><td><span class="qty-badge">1</span></td><td>Terrain following / landing</td></tr>
+          <tr><td>AV-006</td><td>TCAS / ADS-B</td><td>TCAS II + ADS-B In/Out</td><td><span class="qty-badge">1</span></td><td>ICAO compliance</td></tr>
+          <tr><td>AV-007</td><td>Ruddevator servo</td><td>High-torque digital servo</td><td><span class="qty-badge">2</span></td><td>One per inverted-V fin — pitch+yaw combined</td></tr>
+          <tr><td>AV-008</td><td>Aileron servo</td><td>High-torque digital servo</td><td><span class="qty-badge">2</span></td><td>Port + stbd roll control</td></tr>
+          <tr><td>AV-009</td><td>Flap servo</td><td>Medium-torque digital servo</td><td><span class="qty-badge">2</span></td><td>Port + stbd, inboard wing</td></tr>
+          <tr><td>AV-010</td><td>Flight Data Recorder</td><td>Crash-protected solid-state</td><td><span class="qty-badge">1</span></td><td>HUMS + mission data</td></tr>
+          <tr><td colspan="5" class="bom-cat">COMMUNICATIONS</td></tr>
+          <tr><td>CM-001</td><td>SATCOM antenna</td><td>Ku-band conformal patch array</td><td><span class="qty-badge">1</span></td><td>Dorsal fuselage mount</td></tr>
+          <tr><td>CM-002</td><td>LOS datalink terminal</td><td>UHF/L-band directional</td><td><span class="qty-badge">1</span></td><td>~250–300 km range</td></tr>
+          <tr><td>CM-003</td><td>VHF/UHF ATC radio</td><td>ICAO AM/FM transponder</td><td><span class="qty-badge">1</span></td><td>ATC integration</td></tr>
+          <tr><td>CM-004</td><td>HF backup radio</td><td>HF modem 2–30 MHz</td><td><span class="qty-badge">1</span></td><td>C2 fallback</td></tr>
+          <tr><td>CM-005</td><td>COMSEC / encryption</td><td>AES-256 all-links</td><td><span class="qty-badge">1 set</span></td><td>Mandatory for all datalinks</td></tr>
+          <tr><td colspan="5" class="bom-cat">PAYLOAD</td></tr>
+          <tr><td>PL-001</td><td>EO/IR gimbal turret</td><td>3-axis, HD EO + MWIR, ±90°/±120°</td><td><span class="qty-badge">1</span></td><td>Belly-nose mount — zero prop FOV obstruction</td></tr>
+          <tr><td>PL-002</td><td>Laser rangefinder</td><td>Class 3B/4, co-bore-sighted EO/IR</td><td><span class="qty-badge">1</span></td><td>Target geo-location</td></tr>
+          <tr><td>PL-003</td><td>SAR radar (optional)</td><td>X-band SAR, STRIPMAP/SPOT</td><td><span class="qty-badge">1</span></td><td>Wing or belly conformal pod</td></tr>
+          <tr><td>PL-004</td><td>SIGINT antenna (optional)</td><td>Broadband passive RF, DF capability</td><td><span class="qty-badge">1</span></td><td>Wingtip or fuselage sides</td></tr>
+          <tr><td>PL-005</td><td>Payload computer</td><td>GPU-accelerated SBC</td><td><span class="qty-badge">1</span></td><td>H.264/H.265 real-time, AI detection opt.</td></tr>
+          <tr><td colspan="5" class="bom-cat">POWER & ELECTRICAL</td></tr>
+          <tr><td>PW-001</td><td>Main alternator</td><td>Engine-driven AC, 2–4 kVA</td><td><span class="qty-badge">1</span></td><td>Rotax native alternator</td></tr>
+          <tr><td>PW-002</td><td>28 VDC bus + PDU</td><td>Solid-state power controller</td><td><span class="qty-badge">1</span></td><td>Fault isolation, load shedding</td></tr>
+          <tr><td>PW-003</td><td>Emergency Li-ion battery</td><td>28V, ≥30 min flight-critical loads</td><td><span class="qty-badge">1</span></td><td>Engine-out continuity</td></tr>
+          <tr><td>PW-004</td><td>BMS</td><td>Battery management, cell monitoring</td><td><span class="qty-badge">1</span></td><td>Charge + health monitoring</td></tr>
+          <tr><td>PW-005</td><td>Wiring harness</td><td>Shielded aviation-grade wire</td><td><span class="qty-badge">1 set</span></td><td>EMP / lightning TVS on all buses</td></tr>
+          <tr><td colspan="5" class="bom-cat">LANDING GEAR</td></tr>
+          <tr><td>LG-001</td><td>Nose gear strut</td><td>Oleo-pneumatic, steerable</td><td><span class="qty-badge">1</span></td><td>Retractable</td></tr>
+          <tr><td>LG-002</td><td>Main gear struts</td><td>Oleo-pneumatic, retractable</td><td><span class="qty-badge">2</span></td><td>Port + stbd</td></tr>
+          <tr><td>LG-003</td><td>Wheel brakes + ABS</td><td>Carbon disc + anti-skid controller</td><td><span class="qty-badge">2</span></td><td>Main gear only</td></tr>
+          <tr><td>LG-004</td><td>Emergency ballistic chute</td><td>MTOW-class, popgun deploy</td><td><span class="qty-badge">1</span></td><td>Optional recovery system</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-<!-- ===================== PANEL 3: ARCHITECTURE ===================== -->
+<!-- DOWNLOADS -->
+<section id="downloads">
+  <span class="sec-label">DOCUMENT DOWNLOADS</span>
+  <h2 class="sec-title">Design Documents</h2>
+  <p class="sec-sub">Full technical documents including component lists, BOM, system architecture and design rationale for both UAV platforms.</p>
 
-<div class="panel" id="tab-arch">
-  <div class="arch-container">
-    <svg class="arch-svg" height="680" viewBox="0 0 960 680">
-      <defs>
-        <marker id="a2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#00c8ff" opacity="0.8"/>
-        </marker>
-        <marker id="a3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#00ff88" opacity="0.8"/>
-        </marker>
-        <marker id="a4" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L6,3 L0,6 Z" fill="#ff6b00" opacity="0.8"/>
-        </marker>
-      </defs>
-
-```
-  <!-- Background sections -->
-  <rect x="10" y="10" width="940" height="660" fill="#050810" stroke="#1a2a4a" stroke-width="1" rx="4"/>
-
-  <!-- Title -->
-  <text x="480" y="38" text-anchor="middle" fill="#00c8ff" font-size="13" font-family="'Share Tech Mono', monospace" letter-spacing="4">SYSTEM ARCHITECTURE — UAV-LRS-2000</text>
-  <line x1="60" y1="48" x2="900" y2="48" stroke="#1a2a4a" stroke-width="1"/>
-
-  <!-- Zone labels -->
-  <text x="30" y="80" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace" letter-spacing="2">AIRBORNE SEGMENT</text>
-  <text x="680" y="80" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace" letter-spacing="2">GROUND SEGMENT</text>
-  <line x1="650" y1="55" x2="650" y2="665" stroke="#1a2a4a" stroke-width="1" stroke-dasharray="6,4"/>
-
-  <!-- ===== AIRBORNE ===== -->
-
-  <!-- FCC block -->
-  <rect x="30" y="90" width="130" height="55" fill="#0a1828" stroke="#00c8ff" stroke-width="1.5" rx="3"/>
-  <text x="95" y="112" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">FLIGHT CONTROL</text>
-  <text x="95" y="126" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">COMPUTER (FCC)</text>
-  <text x="95" y="138" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">DUAL REDUNDANT</text>
-
-  <!-- NAV block -->
-  <rect x="30" y="165" width="130" height="55" fill="#0a1828" stroke="#00c8ff" stroke-width="1.5" rx="3"/>
-  <text x="95" y="187" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">NAV SUITE</text>
-  <text x="95" y="200" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">INS + GPS/GNSS</text>
-  <text x="95" y="212" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">ADC + RADAR ALT</text>
-
-  <!-- AIR DATA block -->
-  <rect x="30" y="240" width="130" height="40" fill="#0a1828" stroke="#00c8ff" stroke-width="1" rx="3"/>
-  <text x="95" y="258" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">AIR DATA / TCAS</text>
-  <text x="95" y="272" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">ADS-B IN/OUT</text>
-
-  <!-- ENGINE block -->
-  <rect x="30" y="300" width="130" height="55" fill="#0a1828" stroke="#ff6b00" stroke-width="1.5" rx="3"/>
-  <text x="95" y="322" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">TURBOPROP</text>
-  <text x="95" y="335" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">ENGINE + FADEC</text>
-  <text x="95" y="347" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">TPE331 / 940 SHP</text>
-
-  <!-- POWER block -->
-  <rect x="30" y="375" width="130" height="55" fill="#0a1828" stroke="#ff6b00" stroke-width="1.2" rx="3"/>
-  <text x="95" y="396" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">POWER</text>
-  <text x="95" y="409" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">GEN 5–10 kVA</text>
-  <text x="95" y="421" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">28VDC / 115VAC</text>
-
-  <!-- ACTUATORS -->
-  <rect x="30" y="450" width="130" height="40" fill="#0a1828" stroke="#ff6b00" stroke-width="1" rx="3"/>
-  <text x="95" y="468" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">FLIGHT SURFACES</text>
-  <text x="95" y="480" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">SERVOS / EHA</text>
-
-  <!-- Central data bus -->
-  <rect x="195" y="88" width="120" height="410" fill="rgba(0,200,255,0.03)" stroke="#00c8ff" stroke-width="1" rx="3" stroke-dasharray="5,4"/>
-  <text x="255" y="108" text-anchor="middle" fill="#00c8ff" font-size="8" font-family="'Share Tech Mono', monospace" letter-spacing="2">AVIONICS</text>
-  <text x="255" y="120" text-anchor="middle" fill="#00c8ff" font-size="8" font-family="'Share Tech Mono', monospace" letter-spacing="2">DATA BUS</text>
-  <text x="255" y="132" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">MIL-STD-1553B</text>
-  <text x="255" y="144" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">+ ARINC 429</text>
-  <!-- Bus spine -->
-  <line x1="255" y1="155" x2="255" y2="490" stroke="#00c8ff" stroke-width="1.5" opacity="0.4"/>
-
-  <!-- Horizontal connections to bus -->
-  <line x1="160" y1="117" x2="196" y2="117" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-  <line x1="160" y1="192" x2="196" y2="192" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-  <line x1="160" y1="260" x2="196" y2="260" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-  <line x1="160" y1="327" x2="196" y2="327" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-  <line x1="160" y1="402" x2="196" y2="402" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-  <line x1="160" y1="470" x2="196" y2="470" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-
-  <!-- COMMS block -->
-  <rect x="345" y="90" width="140" height="80" fill="#0a1828" stroke="#00c8ff" stroke-width="1.5" rx="3"/>
-  <text x="415" y="112" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">COMMS SYSTEM</text>
-  <text x="415" y="127" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">Ku-BAND SATCOM</text>
-  <text x="415" y="140" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">UHF/L-BAND LOS</text>
-  <text x="415" y="153" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">VHF ATC / HF BACKUP</text>
-  <text x="415" y="163" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">AES-256 ENCRYPTED</text>
-
-  <!-- PAYLOAD block -->
-  <rect x="345" y="190" width="140" height="100" fill="#0a1828" stroke="#00ff88" stroke-width="1.5" rx="3"/>
-  <text x="415" y="212" text-anchor="middle" fill="#00ff88" font-size="10" font-family="'Share Tech Mono', monospace">PAYLOAD SUITE</text>
-  <text x="415" y="228" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">EO/IR TURRET</text>
-  <text x="415" y="241" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">SAR RADAR</text>
-  <text x="415" y="254" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">SIGINT / ELINT</text>
-  <text x="415" y="267" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">LASER RGFDR</text>
-  <text x="415" y="280" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">PAYLOAD CPU / GPU</text>
-
-  <!-- FUEL block -->
-  <rect x="345" y="310" width="140" height="55" fill="#0a1828" stroke="#ff6b00" stroke-width="1.2" rx="3"/>
-  <text x="415" y="332" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">FUEL SYSTEM</text>
-  <text x="415" y="346" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">~850 L JET-A</text>
-  <text x="415" y="358" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">WET WING + FUSELAGE</text>
-
-  <!-- Health monitoring -->
-  <rect x="345" y="385" width="140" height="55" fill="#0a1828" stroke="#00c8ff" stroke-width="1" rx="3"/>
-  <text x="415" y="407" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">VEHICLE HEALTH</text>
-  <text x="415" y="420" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">FDR / HUMS</text>
-  <text x="415" y="432" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">SENSOR FUSION</text>
-
-  <!-- Connections from bus to right blocks -->
-  <line x1="314" y1="130" x2="345" y2="130" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-  <line x1="314" y1="240" x2="345" y2="240" stroke="#00ff88" stroke-width="1" marker-end="url(#a3)"/>
-  <line x1="314" y1="337" x2="345" y2="337" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-  <line x1="314" y1="412" x2="345" y2="412" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-
-  <!-- ===== GROUND SEGMENT ===== -->
-
-  <!-- GCS Workstations -->
-  <rect x="680" y="90" width="240" height="80" fill="#0a1828" stroke="#00c8ff" stroke-width="1.5" rx="3"/>
-  <text x="800" y="112" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">GCS — OPERATOR STATIONS</text>
-  <text x="800" y="127" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">PILOT + PAYLOAD OPERATOR</text>
-  <text x="800" y="140" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">MISSION PLANNING SOFTWARE</text>
-  <text x="800" y="153" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">REAL-TIME VEHICLE CONTROL</text>
-  <text x="800" y="163" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">RUGGEDISED SHELTER / VEHICLE</text>
-
-  <!-- SATCOM terminal GCS -->
-  <rect x="680" y="190" width="110" height="65" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2" rx="3"/>
-  <text x="735" y="212" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">SATCOM</text>
-  <text x="735" y="225" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">TERMINAL</text>
-  <text x="735" y="240" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">Ku-BAND DISH</text>
-  <text x="735" y="250" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">GLOBAL COVERAGE</text>
-
-  <!-- LOS terminal -->
-  <rect x="810" y="190" width="110" height="65" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2" rx="3"/>
-  <text x="865" y="212" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">LOS LINK</text>
-  <text x="865" y="225" text-anchor="middle" fill="#00c8ff" font-size="10" font-family="'Share Tech Mono', monospace">TERMINAL</text>
-  <text x="865" y="240" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">UHF/L-BAND</text>
-  <text x="865" y="250" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">~300 KM RANGE</text>
-
-  <!-- Exploitation -->
-  <rect x="680" y="275" width="240" height="65" fill="#0a1828" stroke="#00ff88" stroke-width="1.3" rx="3"/>
-  <text x="800" y="297" text-anchor="middle" fill="#00ff88" font-size="10" font-family="'Share Tech Mono', monospace">ISR EXPLOITATION</text>
-  <text x="800" y="312" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">VIDEO DISPLAY / RECORDING</text>
-  <text x="800" y="325" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">FULL MOTION VIDEO (FMV)</text>
-  <text x="800" y="335" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">TARGET GEOLOCATION / TAGGING</text>
-
-  <!-- COMSEC -->
-  <rect x="680" y="360" width="240" height="50" fill="#0a1828" stroke="#ff6b00" stroke-width="1.2" rx="3"/>
-  <text x="800" y="381" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">CRYPTO / COMSEC</text>
-  <text x="800" y="396" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">AES-256 / TYPE-1 ENCRYPTION</text>
-  <text x="800" y="406" text-anchor="middle" fill="#4a6080" font-size="7" font-family="'Share Tech Mono', monospace">KGV-SERIES OR EQUIV</text>
-
-  <!-- Power supply -->
-  <rect x="680" y="430" width="240" height="45" fill="#0a1828" stroke="#ff6b00" stroke-width="1" rx="3"/>
-  <text x="800" y="451" text-anchor="middle" fill="#ff6b00" font-size="10" font-family="'Share Tech Mono', monospace">GCS POWER</text>
-  <text x="800" y="464" text-anchor="middle" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">DIESEL GEN + UPS / 24-7 OPS</text>
-
-  <!-- Connections GCS -->
-  <line x1="800" y1="170" x2="800" y2="190" stroke="#00c8ff" stroke-width="1" marker-end="url(#a2)"/>
-  <line x1="800" y1="255" x2="800" y2="275" stroke="#00ff88" stroke-width="1" marker-end="url(#a3)"/>
-  <line x1="800" y1="340" x2="800" y2="360" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-  <line x1="800" y1="410" x2="800" y2="430" stroke="#ff6b00" stroke-width="1" marker-end="url(#a4)"/>
-
-  <!-- === DATALINKS (AIR ↔ GROUND) === -->
-  <!-- SATCOM uplink/downlink -->
-  <path d="M 485,130 Q 580,60 735,190" fill="none" stroke="#00c8ff" stroke-width="1.2" stroke-dasharray="8,4" marker-end="url(#a2)"/>
-  <text x="608" y="70" text-anchor="middle" fill="#00c8ff" font-size="8" font-family="'Share Tech Mono', monospace" transform="rotate(-20,608,70)">SATCOM C2 + ISR (Ku-BAND)</text>
-
-  <!-- LOS link -->
-  <path d="M 485,150 Q 560,300 865,255" fill="none" stroke="#4a6080" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#a2)"/>
-  <text x="630" y="265" fill="#4a6080" font-size="8" font-family="'Share Tech Mono', monospace">LOS LINK (UHF/L-BAND)</text>
-
-  <!-- === LEGEND === -->
-  <rect x="30" y="510" width="580" height="120" fill="#0a1420" stroke="#1a2a4a" stroke-width="1" rx="3"/>
-  <text x="45" y="530" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace" letter-spacing="2">LEGEND</text>
-  <!-- Items -->
-  <line x1="45" y1="552" x2="90" y2="552" stroke="#00c8ff" stroke-width="1.5"/>
-  <text x="96" y="556" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">C2 / Avionics Data Bus</text>
-  <line x1="230" y1="552" x2="275" y2="552" stroke="#00ff88" stroke-width="1.5"/>
-  <text x="281" y="556" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">Payload / ISR Data</text>
-  <line x1="420" y1="552" x2="465" y2="552" stroke="#ff6b00" stroke-width="1.5"/>
-  <text x="471" y="556" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">Power / Propulsion</text>
-
-  <line x1="45" y1="575" x2="90" y2="575" stroke="#00c8ff" stroke-width="1.2" stroke-dasharray="8,4"/>
-  <text x="96" y="579" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">RF Datalink (Air-Ground)</text>
-  <line x1="230" y1="575" x2="275" y2="575" stroke="#4a6080" stroke-width="1" stroke-dasharray="5,4"/>
-  <text x="281" y="579" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">LOS RF Link</text>
-
-  <rect x="45" y="590" width="14" height="10" fill="#0a1828" stroke="#00c8ff" stroke-width="1.2" rx="1"/>
-  <text x="64" y="600" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">Avionics / Control Systems</text>
-  <rect x="230" y="590" width="14" height="10" fill="#0a1828" stroke="#00ff88" stroke-width="1.2" rx="1"/>
-  <text x="249" y="600" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">Payload Systems</text>
-  <rect x="420" y="590" width="14" height="10" fill="#0a1828" stroke="#ff6b00" stroke-width="1.2" rx="1"/>
-  <text x="439" y="600" fill="#c8ddf0" font-size="9" font-family="'Share Tech Mono', monospace">Propulsion / Power</text>
-
-  <!-- Standards note -->
-  <rect x="660" y="510" width="270" height="120" fill="#0a1420" stroke="#1a2a4a" stroke-width="1" rx="3"/>
-  <text x="675" y="530" fill="#4a6080" font-size="9" font-family="'Share Tech Mono', monospace" letter-spacing="2">STANDARDS</text>
-  <text x="675" y="548" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">MIL-STD-1553B  Data Bus</text>
-  <text x="675" y="562" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">STANAG 4586    GCS Interface</text>
-  <text x="675" y="576" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">STANAG 7023    ISR Data</text>
-  <text x="675" y="590" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">DO-178C        SW Assurance</text>
-  <text x="675" y="604" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">ICAO Annex 2   Airspace</text>
-  <text x="675" y="618" fill="#c8ddf0" font-size="8" font-family="'Share Tech Mono', monospace">MIL-STD-810H   Environment</text>
-</svg>
-```
-
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dl-icon">📄</div>
+      <div class="dl-title">UAV-LRS-2000 BOM</div>
+      <div class="dl-desc">Conventional turboprop surveillance UAV. Full component list, system architecture, weight budget, standards reference.</div>
+      <div class="dl-meta">FORMAT: DOCX  ·  UAV-LRS-2000  ·  REV A</div>
+      <button class="btn btn-gold" onclick="downloadDoc('lrs')">↓ DOWNLOAD DOCX</button>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">📄</div>
+      <div class="dl-title">UAV-PSH-001 BOM</div>
+      <div class="dl-desc">Pusher / inverted-V tail UAV. Full BOM, propulsion sub-components, cost-advantage analysis, standards reference.</div>
+      <div class="dl-meta">FORMAT: DOCX  ·  UAV-PSH-001  ·  REV A</div>
+      <button class="btn btn-gold" style="background:var(--teal);color:#000;" onclick="downloadDoc('psh')">↓ DOWNLOAD DOCX</button>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">🖥</div>
+      <div class="dl-title">UAV-LRS-2000 Drawing</div>
+      <div class="dl-desc">Interactive HTML technical drawing — orthographic 3-view, isometric, system architecture diagram.</div>
+      <div class="dl-meta">FORMAT: HTML  ·  INTERACTIVE  ·  3 VIEWS</div>
+      <a href="UAV_2000km_Technical_Drawing.html" target="_blank" class="btn btn-outline">↗ OPEN DRAWING</a>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">🖥</div>
+      <div class="dl-title">UAV-PSH-001 Drawing</div>
+      <div class="dl-desc">Interactive HTML technical drawing — pusher / inverted-V. Orthographic, isometric + system architecture.</div>
+      <div class="dl-meta">FORMAT: HTML  ·  INTERACTIVE  ·  3 VIEWS</div>
+      <a href="UAV_Pusher_InvertedV_Drawing.html" target="_blank" class="btn btn-outline" style="color:var(--teal);border-color:var(--teal);">↗ OPEN DRAWING</a>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="statusbar">
-  <div class="status-item"><div class="status-dot"></div><span>DRAWING REV: A</span></div>
-  <div class="status-item"><span>SCALE: NOT TO EXACT SCALE — CONCEPT ILLUSTRATION</span></div>
-  <div class="status-item"><span>DATE: MAR 2026</span></div>
-  <div class="status-item"><span>CLASS: CONCEPT DESIGN / UNCLASSIFIED</span></div>
-  <div class="status-item"><span>HOVER CALLOUTS FOR COMPONENT DETAILS</span></div>
-</div>
-
-<div id="tooltip"></div>
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="https://egkhor.com.my/home/wp-content/uploads/2026/02/cropped-IMG_7598.png" alt="EGK" class="footer-logo" onerror="this.style.display='none'">
+      <div class="footer-name">EGK AERODYNAMIC</div>
+      <div class="footer-tagline">Advanced UAV design and systems integration. A division of EGK Microelectronics Solutions Group Sdn. Bhd., Malaysia.</div>
+    </div>
+    <div class="footer-col">
+      <h4>PLATFORMS</h4>
+      <a href="#uavs">UAV-LRS-2000 — Turboprop</a>
+      <a href="#uavs">UAV-PSH-001 — Pusher</a>
+      <a href="#bom">Bill of Materials</a>
+      <a href="#downloads">Document Downloads</a>
+    </div>
+    <div class="footer-col">
+      <h4>ORGANISATION</h4>
+      <p>EGK Aerodynamic Division</p>
+      <p>EGK Microelectronics Solutions Group Sdn. Bhd.</p>
+      <p>Malaysia</p>
+      <a href="https://egkhor.com.my" target="_blank">egkhor.com.my</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 EGK MICROELECTRONICS SOLUTIONS GROUP SDN. BHD. — ALL RIGHTS RESERVED</div>
+    <div class="footer-copy">CONCEPT DESIGN — UNCLASSIFIED — REV A — MAR 2026</div>
+  </div>
+</footer>
 
 <script>
-  function showTab(id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    event.target.classList.add('active');
-  }
+// Embedded DOCX data (base64)
+const DOCS = {
+  lrs: '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',
+  psh: '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'
+};
 
-  // Callout hover tooltips
-  const tooltip = document.getElementById('tooltip');
-  document.querySelectorAll('.callout').forEach(el => {
-    el.addEventListener('mouseenter', (e) => {
-      const title = el.dataset.title;
-      const desc = el.dataset.desc;
-      tooltip.innerHTML = `<div class="tt-title">${title}</div>${desc}`;
-      tooltip.classList.add('show');
-    });
-    el.addEventListener('mousemove', (e) => {
-      let x = e.clientX + 16, y = e.clientY + 16;
-      if (x + 220 > window.innerWidth) x = e.clientX - 230;
-      if (y + 100 > window.innerHeight) y = e.clientY - 110;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top = y + 'px';
-    });
-    el.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('show');
-    });
-  });
+function downloadDoc(type) {
+  const b64 = DOCS[type];
+  const name = type === 'lrs' ? '2000km_Surveillance_UAV_Design.docx' : 'UAV_Pusher_PSH001_BOM_EGK.docx';
+  const blob = b64toBlob(b64, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+function b64toBlob(b64, mime) {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+function switchBOM(id) {
+  document.querySelectorAll('.bom-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bom-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('bpanel-' + id).classList.add('active');
+  document.getElementById('btab-' + id).classList.add('active');
+}
+function showBOM(id) {
+  switchBOM(id);
+  document.getElementById('bom').scrollIntoView({ behavior: 'smooth' });
+}
 </script>
-
 </body>
 </html>

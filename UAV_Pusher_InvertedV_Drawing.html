@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Single-Prop Pusher UAV — Technical Drawing</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --panel: #0b0e1a;
+  --border: #1c2a42;
+  --accent: #e8c84a;
+  --accent2: #4ae8c8;
+  --accent3: #e84a6a;
+  --dim: #3a5070;
+  --text: #c0d4e8;
+  --grid: #0e1422;
+  --fuse: #0d1830;
+  --surface: #101c30;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+}
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px);
+  pointer-events:none; z-index:1000;
+}
+
+/* HEADER */
+header {
+  display:grid; grid-template-columns:1fr auto 1fr;
+  align-items:center; padding:14px 28px;
+  border-bottom:1px solid var(--border);
+  background: linear-gradient(90deg,#07090f,#0e1428,#07090f);
+  position:relative;
+}
+header::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.hdr-left { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--dim); line-height:1.9; }
+.hdr-center { text-align:center; }
+.hdr-center h1 { font-family:'Orbitron',monospace; font-size:18px; font-weight:900; letter-spacing:8px; color:#fff; }
+.hdr-center .sub { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--accent); letter-spacing:4px; margin-top:5px; }
+.hdr-right { text-align:right; font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--dim); line-height:1.9; }
+
+/* TABS */
+.tabs { display:flex; background:var(--panel); border-bottom:1px solid var(--border); padding:0 28px; gap:2px; }
+.tab {
+  padding:13px 26px; font-family:'Share Tech Mono',monospace;
+  font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  cursor:pointer; color:var(--dim); border-bottom:2px solid transparent;
+  transition:all .2s; user-select:none;
+}
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* PANELS */
+.panel { display:none; padding:24px 28px; }
+.panel.active { display:block; }
+
+/* DRAWING AREA */
+.da {
+  background:var(--panel); border:1px solid var(--border);
+  position:relative; overflow:hidden;
+}
+.da::before {
+  content:''; position:absolute; inset:0;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:25px 25px; pointer-events:none;
+}
+.vlabel {
+  position:absolute; top:0; left:0;
+  font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:3px;
+  color:var(--accent); text-transform:uppercase;
+  padding:6px 12px; background:rgba(232,200,74,0.07);
+  border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+  z-index:5;
+}
+
+/* CALLOUTS */
+.co {
+  position:absolute; width:9px; height:9px; border-radius:50%;
+  background:var(--accent); border:1px solid #fff; cursor:pointer; z-index:10;
+  animation:cpulse 2.5s infinite; transition:transform .15s;
+}
+.co:hover { transform:scale(1.6); animation:none; box-shadow:0 0 14px var(--accent); }
+@keyframes cpulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(232,200,74,.5)}
+  50%{box-shadow:0 0 0 7px rgba(232,200,74,0)}
+}
+
+/* SPEC CARD */
+.spec-card { background:var(--panel); border:1px solid var(--border); }
+.sc-hdr { padding:9px 14px; background:rgba(232,200,74,0.06); border-bottom:1px solid var(--border); font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--accent); }
+.sc-row { display:flex; justify-content:space-between; padding:7px 14px; border-bottom:1px solid rgba(28,42,66,.5); font-size:13px; }
+.sc-row:last-child{border-bottom:none;}
+.sc-k { color:var(--dim); font-size:11px; }
+.sc-v { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--text); font-weight:600; }
+.sc-v.hi { color:var(--accent); }
+
+/* ARCH */
+.arch-wrap { overflow-x:auto; }
+
+/* STATUS */
+.sbar {
+  display:flex; gap:28px; padding:9px 28px;
+  border-top:1px solid var(--border); background:var(--panel);
+  font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--dim);
+  position:relative;
+}
+.sbar::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+.sd { width:5px; height:5px; border-radius:50%; background:var(--accent2); margin-top:2px; animation:blink 2.2s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+
+/* TOOLTIP */
+#tt {
+  position:fixed; background:rgba(7,9,15,.97); border:1px solid var(--accent);
+  padding:10px 13px; font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--accent);
+  pointer-events:none; z-index:9999; opacity:0; transition:opacity .15s; max-width:210px; line-height:1.65;
+}
+#tt.show{opacity:1;}
+#tt .tt-t { color:#fff; font-size:11px; font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:2px; margin-bottom:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    DRAWING NO: UAV-PSH-001<br>
+    CONFIG: PUSHER / INV-V TAIL<br>
+    REV: A — CONCEPT DRAFT
+  </div>
+  <div class="hdr-center">
+    <h1>PUSHER UAV</h1>
+    <div class="sub">SINGLE PROP · INVERTED-V TAIL · 2000 KM RANGE</div>
+  </div>
+  <div class="hdr-right">
+    SCALE: NTS<br>
+    DATE: MAR 2026<br>
+    CLASS: CONCEPT
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('ortho',this)">01 — THREE-VIEW ORTHO</div>
+  <div class="tab" onclick="showTab('iso',this)">02 — ISOMETRIC</div>
+  <div class="tab" onclick="showTab('arch',this)">03 — SYSTEM ARCHITECTURE</div>
+</div>
+
+<!-- ======================================================
+     PANEL 1 — THREE-VIEW ORTHOGRAPHIC
+     ====================================================== -->
+<div class="panel active" id="tab-ortho">
+  <div style="display:grid;grid-template-columns:1fr 270px;gap:3px;">
+    <div>
+
+      <!-- SIDE VIEW -->
+      <div class="da" style="height:310px;margin-bottom:3px;">
+        <div class="vlabel">SIDE VIEW — PROFILE</div>
+        <svg width="100%" height="100%" viewBox="0 0 800 310" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,1 L5,3 L0,5 Z" fill="#e8c84a" opacity=".75"/>
+            </marker>
+            <marker id="arrb" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+              <path d="M5,1 L0,3 L5,5 Z" fill="#e8c84a" opacity=".75"/>
+            </marker>
+          </defs>
+
+          <!-- ── FUSELAGE ── -->
+          <!-- Top profile -->
+          <path d="M 95,148  Q 130,132 200,128  L 560,126  Q 610,126 650,134  L 680,145
+                   Q 650,156 610,158  L 200,160  Q 130,160 95,148 Z"
+                fill="#0d1830" stroke="#e8c84a" stroke-width="1.6"/>
+          <!-- Nose taper to point -->
+          <path d="M 95,148 Q 68,148 44,148" stroke="#e8c84a" stroke-width="1.5" fill="none"/>
+          <path d="M 44,148 L 28,148" stroke="#e8c84a" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Sensor nose bulge (EO/IR pod on belly) -->
+          <path d="M 95,160 Q 115,175 155,178 Q 180,179 195,172 L 200,160"
+                fill="#0d1830" stroke="#e8c84a" stroke-width="1.2"/>
+          <ellipse cx="150" cy="178" rx="24" ry="11" fill="#0d1830" stroke="#4ae8c8" stroke-width="1.3"/>
+          <circle cx="150" cy="179" r="7" fill="#101c30" stroke="#4ae8c8" stroke-width="1"/>
+          <circle cx="150" cy="179" r="3" fill="#4ae8c8" opacity=".35"/>
+
+          <!-- Canopy / avionics bay cover -->
+          <path d="M 100,128 Q 130,112 175,108 Q 210,105 230,115 L 235,126"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.1"/>
+
+          <!-- ── MAIN WING ── -->
+          <!-- Port leading edge visible -->
+          <path d="M 310,126 L 270,46 L 282,42 L 336,120 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+          <!-- Stbd wing ghost -->
+          <path d="M 310,126 L 340,46 L 354,49 L 330,124 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1" opacity=".35"/>
+          <!-- Aileron hinge -->
+          <line x1="276" y1="50" x2="310" y2="106" stroke="#4ae8c8" stroke-width=".9" stroke-dasharray="4,3"/>
+          <text x="250" y="36" fill="#4ae8c8" font-size="8" font-family="'Share Tech Mono',monospace">AILERON</text>
+
+          <!-- ── FUSELAGE BOOM / REAR ── -->
+          <path d="M 650,134 L 700,138 L 740,140 L 700,152 L 650,156 Z"
+                fill="#0d1830" stroke="#e8c84a" stroke-width="1.3"/>
+
+          <!-- ── INVERTED-V TAILS ── -->
+          <!-- Port V fin (visible) -->
+          <path d="M 728,140 L 690,90 L 700,87 L 742,138 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+          <!-- Ruddevator hinge -->
+          <line x1="693" y1="93" x2="736" y2="138" stroke="#4ae8c8" stroke-width=".9" stroke-dasharray="4,3"/>
+          <!-- Stbd V fin ghost -->
+          <path d="M 728,152 L 690,202 L 700,205 L 742,154 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.1" opacity=".4"/>
+
+          <!-- ── PUSHER PROP ── -->
+          <!-- Engine cowl -->
+          <path d="M 648,128 L 700,124 L 720,135 L 720,148 L 700,158 L 648,158 Z"
+                fill="#0a1220" stroke="#e8c84a" stroke-width="1.5"/>
+          <!-- Prop disk (side view = vertical line) -->
+          <line x1="738" y1="118" x2="738" y2="170" stroke="#e8c84a" stroke-width="2" opacity=".8"/>
+          <!-- Spinner -->
+          <path d="M 720,143 L 742,139 L 742,150 L 720,148 Z" fill="#e8c84a" opacity=".25"/>
+          <!-- Prop arc -->
+          <path d="M 738,120 A 24 24 0 0 1 738,168" fill="none" stroke="#e8c84a" stroke-width=".8" stroke-dasharray="3,3" opacity=".6"/>
+          <text x="744" y="147" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace">PROP</text>
+
+          <!-- ── LANDING GEAR ── -->
+          <line x1="185" y1="178" x2="185" y2="218" stroke="#e8c84a" stroke-width="1.5"/>
+          <ellipse cx="185" cy="222" rx="15" ry="7" fill="#090e1c" stroke="#e8c84a" stroke-width="1.1"/>
+          <line x1="420" y1="160" x2="420" y2="218" stroke="#e8c84a" stroke-width="1.5"/>
+          <ellipse cx="420" cy="222" rx="15" ry="7" fill="#090e1c" stroke="#e8c84a" stroke-width="1.1"/>
+
+          <!-- ── DIMENSION LINES ── -->
+          <!-- Overall length -->
+          <line x1="28" y1="252" x2="742" y2="252" stroke="#e8c84a" stroke-width=".8" opacity=".6" marker-start="url(#arrb)" marker-end="url(#arr)"/>
+          <text x="385" y="266" text-anchor="middle" fill="#e8c84a" font-size="9" font-family="'Share Tech Mono',monospace" opacity=".85">~11 m  OVERALL LENGTH</text>
+
+          <!-- Fuselage height -->
+          <line x1="16" y1="108" x2="16" y2="178" stroke="#e8c84a" stroke-width=".8" opacity=".6" marker-start="url(#arrb)" marker-end="url(#arr)"/>
+          <text x="10" y="148" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace" opacity=".8" transform="rotate(-90,10,148)">0.9 m</text>
+
+          <!-- Labels -->
+          <text x="34" y="140" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">PITOT/NOSE</text>
+          <text x="222" y="106" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">AVIONICS BAY</text>
+          <text x="275" y="34" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">WING SPAR</text>
+          <text x="662" y="120" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">ENGINE COWL</text>
+          <text x="692" y="80" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">INV-V FIN</text>
+          <text x="118" y="198" fill="#4ae8c8" font-size="8" font-family="'Share Tech Mono',monospace">EO/IR</text>
+        </svg>
+        <!-- Callouts -->
+        <div class="co" style="left:18%;top:62%"
+             data-t="EO/IR Sensor Pod"
+             data-d="Nose-mounted stabilised turret. EO + MWIR. ±90° pan, ±120° tilt. &lt;25 μrad jitter. Laser rangefinder integrated."></div>
+        <div class="co" style="left:38%;top:18%"
+             data-t="High-Aspect-Ratio Wing"
+             data-d="CFRP wet wing. 16–20 m span. Aileron + flap. ~30° sweep on leading edge. Fuel: ~400–600 L per side."></div>
+        <div class="co" style="left:84%;top:36%"
+             data-t="Pusher Turboprop"
+             data-d="Rear-mounted engine. Clean nose for sensors. 100–200 hp class piston or small turboprop. 3-blade constant-speed prop."></div>
+        <div class="co" style="left:87%;top:28%"
+             data-t="Inverted-V Tail (Ruddevator)"
+             data-d="Combined rudder+elevator surfaces. Two fins angled ~45° down. Eliminates horizontal stabiliser. Saves weight &amp; drag."></div>
+      </div>
+
+      <!-- TOP VIEW -->
+      <div class="da" style="height:250px;">
+        <div class="vlabel">TOP VIEW — PLAN</div>
+        <svg width="100%" height="100%" viewBox="0 0 800 250" preserveAspectRatio="xMidYMid meet">
+          <!-- Fuselage top -->
+          <path d="M 44,118  Q 80,104 170,102  L 590,104  Q 650,106 700,116
+                   L 695,128  Q 640,136 590,138  L 170,140  Q 80,140 44,118 Z"
+                fill="#0d1830" stroke="#e8c84a" stroke-width="1.6"/>
+          <path d="M 44,118 L 28,118" stroke="#e8c84a" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- PORT WING -->
+          <path d="M 278,102 L 60,36 L 72,30 L 304,94 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+          <!-- STBD WING -->
+          <path d="M 278,140 L 60,205 L 72,211 L 304,148 Z"
+                fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+
+          <!-- Aileron outboard -->
+          <path d="M 68,34 L 175,67 L 177,77 L 70,44 Z" fill="#0d1830" stroke="#4ae8c8" stroke-width="1.1"/>
+          <path d="M 68,207 L 175,174 L 177,164 L 70,197 Z" fill="#0d1830" stroke="#4ae8c8" stroke-width="1.1"/>
+          <!-- Flap inboard -->
+          <path d="M 175,67 L 275,96 L 277,106 L 177,77 Z" fill="#0d1830" stroke="#4ae8c8" stroke-width=".8" stroke-dasharray="5,3"/>
+          <path d="M 175,174 L 275,147 L 277,137 L 177,164 Z" fill="#0d1830" stroke="#4ae8c8" stroke-width=".8" stroke-dasharray="5,3"/>
+
+          <!-- Wing tip nav lights -->
+          <circle cx="63" cy="33" r="5" fill="#4ae8c8" opacity=".8"/>
+          <circle cx="63" cy="208" r="5" fill="#e84a6a" opacity=".8"/>
+
+          <!-- Engine cowl + prop (top view) -->
+          <path d="M 625,104 L 700,100 L 715,112 L 715,130 L 700,140 L 625,138 Z"
+                fill="#0a1220" stroke="#e8c84a" stroke-width="1.5"/>
+          <line x1="715" y1="97" x2="715" y2="143" stroke="#e8c84a" stroke-width="2" opacity=".85"/>
+          <path d="M 715,97 A 23 23 0 0 1 715,143" fill="none" stroke="#e8c84a" stroke-width=".8" stroke-dasharray="3,3" opacity=".5"/>
+
+          <!-- Inverted-V tails (top view — foreshortened) -->
+          <path d="M 695,112 L 720,88 L 728,92 L 708,118 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.3"/>
+          <path d="M 695,130 L 720,154 L 728,150 L 708,124 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.3"/>
+
+          <!-- EO/IR (top view) -->
+          <ellipse cx="155" cy="121" rx="22" ry="16" fill="#0d1830" stroke="#4ae8c8" stroke-width="1.2"/>
+          <ellipse cx="155" cy="121" rx="11" ry="8" fill="#101c30" stroke="#4ae8c8" stroke-width="1"/>
+
+          <!-- WINGSPAN dim -->
+          <line x1="66" y1="29" x2="66" y2="212" stroke="#e8c84a" stroke-width=".8" opacity=".6" marker-start="url(#arrb)" marker-end="url(#arr)"/>
+          <text x="44" y="125" text-anchor="middle" fill="#e8c84a" font-size="9" font-family="'Share Tech Mono',monospace" opacity=".85" transform="rotate(-90,44,125)">18 m WINGSPAN</text>
+
+          <text x="58" y="22" fill="#4ae8c8" font-size="7" font-family="'Share Tech Mono',monospace">PORT NAV (GRN)</text>
+          <text x="58" y="222" fill="#e84a6a" font-size="7" font-family="'Share Tech Mono',monospace">STBD NAV (RED)</text>
+          <text x="90" y="22" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">AILERON</text>
+          <text x="190" y="20" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">FLAP</text>
+          <text x="630" y="92" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">PUSHER ENGINE</text>
+        </svg>
+        <div class="co" style="left:8%;top:50%"
+             data-t="Wet Wing Fuel Tanks"
+             data-d="Integral fuel in wing spar box. ~400–600 L per side. Total ~850 L Jet-A or AvGas. Cross-feed valve on centreline."></div>
+        <div class="co" style="left:88%;top:45%"
+             data-t="Rear-Pusher Prop + Engine"
+             data-d="Engine on centreline at rear. No nose obstruction for sensors. 3-blade composite prop. Exhaust exits aft/downward."></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: FRONT VIEW + SPECS -->
+    <div style="display:flex;flex-direction:column;gap:6px;">
+
+      <!-- FRONT VIEW -->
+      <div class="da" style="height:310px;">
+        <div class="vlabel">FRONT VIEW</div>
+        <svg width="100%" height="100%" viewBox="0 0 270 310" preserveAspectRatio="xMidYMid meet">
+          <!-- Fuselage nose circle -->
+          <ellipse cx="135" cy="140" rx="32" ry="30" fill="#0d1830" stroke="#e8c84a" stroke-width="1.6"/>
+          <ellipse cx="135" cy="135" rx="20" ry="18" fill="#101c30" stroke="#e8c84a" stroke-width="1.1"/>
+          <!-- Pitot probe -->
+          <line x1="135" y1="110" x2="135" y2="90" stroke="#e8c84a" stroke-width="1.8"/>
+          <circle cx="135" cy="89" r="3" fill="#e8c84a" opacity=".6"/>
+
+          <!-- EO/IR turret front -->
+          <ellipse cx="135" cy="170" rx="18" ry="13" fill="#0d1830" stroke="#4ae8c8" stroke-width="1.3"/>
+          <circle cx="135" cy="171" r="7" fill="#101c30" stroke="#4ae8c8" stroke-width="1"/>
+          <circle cx="135" cy="171" r="3" fill="#4ae8c8" opacity=".3"/>
+
+          <!-- PORT WING (front edge-on) -->
+          <path d="M 103,138 L 14,124 L 15,133 L 103,148 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+          <!-- STBD WING -->
+          <path d="M 167,138 L 256,124 L 255,133 L 167,148 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.6"/>
+
+          <!-- Wing dihedral note -->
+          <text x="14" y="122" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">2° DIHEDRAL</text>
+
+          <!-- Engine cowl (behind, circular) -->
+          <ellipse cx="135" cy="100" rx="26" ry="20" fill="#0a1220" stroke="#e8c84a" stroke-width="1.5" opacity=".7"/>
+          <!-- Prop (front-on = cross) -->
+          <line x1="109" y1="100" x2="161" y2="100" stroke="#e8c84a" stroke-width="3" opacity=".8"/>
+          <line x1="135" y1="74" x2="135" y2="126" stroke="#e8c84a" stroke-width="3" opacity=".8"/>
+          <circle cx="135" cy="100" r="6" fill="#e8c84a" opacity=".4"/>
+          <circle cx="135" cy="100" r="27" fill="none" stroke="#e8c84a" stroke-width=".6" stroke-dasharray="3,4" opacity=".4"/>
+
+          <!-- Inverted-V tails (front view) -->
+          <!-- Port fin (down-left) -->
+          <path d="M 125,198 L 78,236 L 84,244 L 132,206 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.5"/>
+          <!-- Stbd fin (down-right) -->
+          <path d="M 145,198 L 192,236 L 186,244 L 138,206 Z" fill="#101c30" stroke="#e8c84a" stroke-width="1.5"/>
+
+          <!-- V angle label -->
+          <line x1="135" y1="198" x2="135" y2="248" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+          <text x="115" y="258" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">~45° V ANGLE</text>
+
+          <!-- Landing gear -->
+          <line x1="118" y1="170" x2="112" y2="215" stroke="#e8c84a" stroke-width="1.4"/>
+          <ellipse cx="110" cy="219" rx="15" ry="6" fill="#090e1c" stroke="#e8c84a" stroke-width="1.1"/>
+          <line x1="152" y1="170" x2="158" y2="215" stroke="#e8c84a" stroke-width="1.4"/>
+          <ellipse cx="160" cy="219" rx="15" ry="6" fill="#090e1c" stroke="#e8c84a" stroke-width="1.1"/>
+
+          <!-- Span dim -->
+          <line x1="14" y1="270" x2="256" y2="270" stroke="#e8c84a" stroke-width=".8" opacity=".6" marker-start="url(#arrb)" marker-end="url(#arr)"/>
+          <text x="135" y="283" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace" opacity=".8">18 m</text>
+
+          <!-- Labels -->
+          <text x="4" y="108" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">PORT</text>
+          <text x="238" y="108" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">STBD</text>
+        </svg>
+      </div>
+
+      <!-- SPECS -->
+      <div class="spec-card">
+        <div class="sc-hdr">DESIGN PARAMETERS</div>
+        <div class="sc-row"><span class="sc-k">Config</span><span class="sc-v hi">Pusher / Inv-V</span></div>
+        <div class="sc-row"><span class="sc-k">Range</span><span class="sc-v hi">~2,000 km</span></div>
+        <div class="sc-row"><span class="sc-k">Wingspan</span><span class="sc-v">16–20 m</span></div>
+        <div class="sc-row"><span class="sc-k">Length</span><span class="sc-v">~11 m</span></div>
+        <div class="sc-row"><span class="sc-k">MTOW</span><span class="sc-v">600–900 kg</span></div>
+        <div class="sc-row"><span class="sc-k">Engine</span><span class="sc-v">100–200 hp</span></div>
+        <div class="sc-row"><span class="sc-k">Fuel</span><span class="sc-v">~700 L</span></div>
+        <div class="sc-row"><span class="sc-k">Endurance</span><span class="sc-v">24–36 hrs</span></div>
+        <div class="sc-row"><span class="sc-k">Cruise</span><span class="sc-v">120–180 km/h</span></div>
+        <div class="sc-row"><span class="sc-k">Altitude</span><span class="sc-v">5–8 km</span></div>
+        <div class="sc-row"><span class="sc-k">Payload</span><span class="sc-v">50–150 kg</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================
+     PANEL 2 — ISOMETRIC
+     ====================================================== -->
+<div class="panel" id="tab-iso">
+  <div class="da" style="height:600px;">
+    <div class="vlabel">ISOMETRIC — 3/4 UPPER PORT VIEW</div>
+    <svg width="100%" height="100%" viewBox="0 0 980 600" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="fgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#1a3050"/>
+          <stop offset="100%" style="stop-color:#080e1c"/>
+        </linearGradient>
+        <linearGradient id="wgrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#14263c"/>
+          <stop offset="100%" style="stop-color:#070b14"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+
+      <!-- Ground shadow -->
+      <ellipse cx="460" cy="545" rx="300" ry="16" fill="rgba(0,0,0,.55)"/>
+
+      <!-- ══ PORT WING ══ -->
+      <path d="M 318,278  L 52,162  L 68,146  L 356,260 Z"
+            fill="url(#wgrad)" stroke="#e8c84a" stroke-width="1.8"/>
+      <!-- Aileron -->
+      <path d="M 58,150  L 180,198  L 184,210  L 62,162 Z"
+            fill="#0d1420" stroke="#4ae8c8" stroke-width="1.2"/>
+      <!-- Flap -->
+      <path d="M 180,198  L 312,248  L 316,260  L 184,210 Z"
+            fill="#0d1420" stroke="#4ae8c8" stroke-width=".9" stroke-dasharray="5,3"/>
+      <!-- Wingtip nav -->
+      <circle cx="54" cy="155" r="6" fill="#4ae8c8" opacity=".9" filter="url(#glow)"/>
+      <text x="26" y="148" fill="#4ae8c8" font-size="8" font-family="'Share Tech Mono',monospace">PORT (GRN)</text>
+
+      <!-- ══ STBD WING (partial perspective) ══ -->
+      <path d="M 356,260  L 510,305  L 524,290  L 370,248 Z"
+            fill="url(#wgrad)" stroke="#e8c84a" stroke-width="1.3" opacity=".65"/>
+      <circle cx="527" cy="287" r="5" fill="#e84a6a" opacity=".8" filter="url(#glow)"/>
+
+      <!-- ══ FUSELAGE TOP ══ -->
+      <path d="M 195,230  Q 250,208 340,204  L 630,200  Q 695,202 745,216
+               L 762,248  Q 705,268 645,272  L 330,275  Q 248,274 195,254 Z"
+            fill="url(#fgrad)" stroke="#e8c84a" stroke-width="1.9"/>
+      <!-- Fuselage side face -->
+      <path d="M 195,254  Q 248,274 330,275  L 645,272  L 762,248
+               L 775,272  Q 714,296 648,300  L 328,305  Q 244,304 195,280 Z"
+            fill="#080e1c" stroke="#e8c84a" stroke-width="1.2"/>
+
+      <!-- Nose -->
+      <path d="M 195,230  Q 155,240 114,248  Q 94,253 82,256"
+            stroke="#e8c84a" stroke-width="1.9" fill="none"/>
+      <path d="M 195,254  Q 155,264 82,256"
+            stroke="#e8c84a" stroke-width="1.2" fill="none"/>
+      <ellipse cx="80" cy="255" rx="16" ry="12" fill="#090e1c" stroke="#e8c84a" stroke-width="1.6" transform="rotate(-5,80,255)"/>
+      <!-- Pitot -->
+      <line x1="80" y1="244" x2="75" y2="222" stroke="#e8c84a" stroke-width="1.5"/>
+      <circle cx="74" cy="221" r="3" fill="#e8c84a" opacity=".5"/>
+
+      <!-- Avionics / canopy cover -->
+      <path d="M 200,230  Q 240,210 295,206  L 380,202  L 385,215  L 295,220  Q 240,224 200,245 Z"
+            fill="#101c30" stroke="#e8c84a" stroke-width="1.1" opacity=".8"/>
+
+      <!-- EO/IR turret -->
+      <ellipse cx="248" cy="278" rx="34" ry="22" fill="#090e1c" stroke="#4ae8c8" stroke-width="1.4" transform="rotate(-8,248,278)"/>
+      <ellipse cx="246" cy="283" rx="18" ry="12" fill="#101c30" stroke="#4ae8c8" stroke-width="1.1"/>
+      <circle cx="245" cy="284" r="7" fill="#4ae8c8" opacity=".18"/>
+      <circle cx="245" cy="284" r="3.5" fill="#4ae8c8" opacity=".55"/>
+
+      <!-- ══ ENGINE COWL (rear, pusher) ══ -->
+      <path d="M 630,200  L 720,196  L 755,212  L 758,240  L 750,258  L 712,268  L 628,272 Z"
+            fill="#090e1c" stroke="#e8c84a" stroke-width="1.7"/>
+      <!-- Engine intake (front face of cowl) -->
+      <ellipse cx="628" cy="236" rx="14" ry="20" fill="#040608" stroke="#e8c84a" stroke-width="1.4"/>
+      <!-- Exhaust ring -->
+      <ellipse cx="758" cy="234" rx="10" ry="16" fill="#040608" stroke="#e8c84a" stroke-width="1.3"/>
+      <!-- Prop -->
+      <ellipse cx="770" cy="234" rx="9" ry="32" fill="none" stroke="#e8c84a" stroke-width="1.1" opacity=".7"/>
+      <line x1="770" y1="202" x2="770" y2="266" stroke="#e8c84a" stroke-width="3" opacity=".85"/>
+      <line x1="756" y1="218" x2="784" y2="250" stroke="#e8c84a" stroke-width="3" opacity=".85"/>
+      <line x1="784" y1="218" x2="756" y2="250" stroke="#e8c84a" stroke-width="3" opacity=".85"/>
+      <circle cx="770" cy="234" r="7" fill="#e8c84a" opacity=".35"/>
+      <!-- Spinner cone -->
+      <path d="M 758,228 L 778,234 L 758,240 Z" fill="#e8c84a" opacity=".3"/>
+
+      <!-- ══ INVERTED-V TAILS ══ -->
+      <!-- Port fin (upper-left going down-left) -->
+      <path d="M 726,212  L 706,138  L 720,134  L 748,208 Z"
+            fill="#101c30" stroke="#e8c84a" stroke-width="1.7"/>
+      <!-- Ruddevator hinge -->
+      <line x1="709" y1="142" x2="740" y2="208" stroke="#4ae8c8" stroke-width=".9" stroke-dasharray="4,3"/>
+      <!-- Stbd fin (upper-right going down-right — foreshortened) -->
+      <path d="M 742,256  L 760,326  L 748,332  L 730,262 Z"
+            fill="#101c30" stroke="#e8c84a" stroke-width="1.4" opacity=".6"/>
+
+      <!-- ══ LANDING GEAR ══ -->
+      <!-- Nose gear -->
+      <line x1="192" y1="278" x2="186" y2="345" stroke="#e8c84a" stroke-width="1.8"/>
+      <line x1="179" y1="345" x2="196" y2="348" stroke="#e8c84a" stroke-width="2.5"/>
+      <ellipse cx="188" cy="352" rx="20" ry="9" fill="#090e1c" stroke="#e8c84a" stroke-width="1.3" transform="rotate(-5,188,352)"/>
+      <!-- Port main gear -->
+      <line x1="408" y1="288" x2="396" y2="358" stroke="#e8c84a" stroke-width="1.8"/>
+      <ellipse cx="396" cy="363" rx="22" ry="9" fill="#090e1c" stroke="#e8c84a" stroke-width="1.2"/>
+      <!-- Stbd main gear (partial) -->
+      <line x1="460" y1="278" x2="472" y2="340" stroke="#e8c84a" stroke-width="1.4" opacity=".45"/>
+
+      <!-- ══ CALLOUT LINES ══ -->
+      <line x1="80" y1="244" x2="55" y2="200" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="8" y="196" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace">PITOT / NOSE</text>
+
+      <line x1="248" y1="300" x2="215" y2="390" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="140" y="404" fill="#4ae8c8" font-size="9" font-family="'Share Tech Mono',monospace">EO/IR TURRET</text>
+
+      <line x1="155" y1="155" x2="130" y2="108" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="36" y="102" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace">PORT WING — 18 m SPAN</text>
+
+      <line x1="685" y1="197" x2="665" y2="148" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="570" y="142" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace">PUSHER ENGINE / PROP</text>
+
+      <line x1="714" y1="138" x2="740" y2="94" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="742" y="90" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace">INV-V FIN (RUDDEVATOR)</text>
+
+      <line x1="295" y1="208" x2="295" y2="162" stroke="#3a5070" stroke-width=".8" stroke-dasharray="3,3"/>
+      <text x="230" y="157" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace">AVIONICS / SATCOM</text>
+
+      <!-- Scale bar -->
+      <line x1="60" y1="510" x2="240" y2="510" stroke="#e8c84a" stroke-width="1.5" opacity=".65"/>
+      <line x1="60" y1="504" x2="60" y2="516" stroke="#e8c84a" stroke-width="1.5" opacity=".65"/>
+      <line x1="240" y1="504" x2="240" y2="516" stroke="#e8c84a" stroke-width="1.5" opacity=".65"/>
+      <text x="150" y="528" text-anchor="middle" fill="#e8c84a" font-size="9" font-family="'Share Tech Mono',monospace" opacity=".75">≈ 4.5 m</text>
+      <text x="150" y="542" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">NOT TO EXACT SCALE</text>
+    </svg>
+    <!-- Callouts -->
+    <div class="co" style="left:25%;top:50%"
+         data-t="EO/IR Sensor Turret"
+         data-d="Nose-belly mounted. 3-axis gyro stabilised. Full HD + MWIR thermal. Laser rangefinder. No propeller in field of view — key benefit of pusher config."></div>
+    <div class="co" style="left:72%;top:30%"
+         data-t="Pusher Engine"
+         data-d="Rear-mounted 100–200 hp turboprop or piston. 3-blade composite prop. Keeps entire forward fuselage clean for sensor boresight."></div>
+    <div class="co" style="left:73%;top:22%"
+         data-t="Inverted-V Ruddevator"
+         data-d="Each surface acts as combined rudder + elevator. Differential = yaw. Symmetric = pitch. Simple, fewer parts than conventional empennage."></div>
+    <div class="co" style="left:6%;top:30%"
+         data-t="Wing Navigation Light"
+         data-d="Port = Green per ICAO. Wingtip also houses static port + optional AoA vane. Composite winglet option for drag reduction."></div>
+  </div>
+</div>
+
+<!-- ======================================================
+     PANEL 3 — SYSTEM ARCHITECTURE
+     ====================================================== -->
+<div class="panel" id="tab-arch">
+  <div class="arch-wrap">
+    <svg width="100%" height="700" viewBox="0 0 980 700" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="ac" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,1 L5,3 L0,5 Z" fill="#e8c84a" opacity=".8"/>
+        </marker>
+        <marker id="ag" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,1 L5,3 L0,5 Z" fill="#4ae8c8" opacity=".8"/>
+        </marker>
+        <marker id="ar" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,1 L5,3 L0,5 Z" fill="#e84a6a" opacity=".8"/>
+        </marker>
+      </defs>
+
+      <rect x="8" y="8" width="964" height="684" fill="#07090f" stroke="#1c2a42" stroke-width="1" rx="4"/>
+      <text x="490" y="36" text-anchor="middle" fill="#e8c84a" font-size="13" font-family="'Share Tech Mono',monospace" letter-spacing="4">SYSTEM ARCHITECTURE — UAV-PSH-001  (PUSHER / INV-V TAIL)</text>
+      <line x1="60" y1="46" x2="920" y2="46" stroke="#1c2a42" stroke-width="1"/>
+
+      <!-- Zone divider -->
+      <line x1="660" y1="50" x2="660" y2="680" stroke="#1c2a42" stroke-width="1" stroke-dasharray="6,4"/>
+      <text x="28" y="70" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace" letter-spacing="2">AIRBORNE SEGMENT</text>
+      <text x="680" y="70" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace" letter-spacing="2">GROUND SEGMENT</text>
+
+      <!-- Helper: draw a box -->
+      <!-- ===== AIRBORNE ===== -->
+
+      <!-- FCC -->
+      <rect x="28" y="82" width="130" height="58" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.5" rx="3"/>
+      <text x="93" y="104" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">FLIGHT CONTROL</text>
+      <text x="93" y="118" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">COMPUTER (FCC)</text>
+      <text x="93" y="131" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">DUAL REDUNDANT</text>
+
+      <!-- NAV -->
+      <rect x="28" y="158" width="130" height="58" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.5" rx="3"/>
+      <text x="93" y="178" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">NAV SUITE</text>
+      <text x="93" y="193" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">INS + GPS/GNSS</text>
+      <text x="93" y="206" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">ADC + RADAR ALT</text>
+
+      <!-- AIR DATA -->
+      <rect x="28" y="233" width="130" height="40" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1" rx="3"/>
+      <text x="93" y="251" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">AIR DATA / TCAS</text>
+      <text x="93" y="265" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">ADS-B IN/OUT</text>
+
+      <!-- SURFACES -->
+      <rect x="28" y="290" width="130" height="40" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.2" rx="3"/>
+      <text x="93" y="308" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">FLIGHT SURFACES</text>
+      <text x="93" y="321" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">AILERON / FLAP / RUDDEVATOR</text>
+
+      <!-- ENGINE + FADEC -->
+      <rect x="28" y="348" width="130" height="58" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.5" rx="3"/>
+      <text x="93" y="368" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">PUSHER ENGINE</text>
+      <text x="93" y="382" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">+ FADEC</text>
+      <text x="93" y="396" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">100–200 HP / PROP</text>
+
+      <!-- POWER -->
+      <rect x="28" y="424" width="130" height="40" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.1" rx="3"/>
+      <text x="93" y="442" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">POWER BUS</text>
+      <text x="93" y="456" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">28 VDC / ALTERNATOR</text>
+
+      <!-- DATA BUS column -->
+      <rect x="188" y="80" width="118" height="392" fill="rgba(232,200,74,.03)" stroke="#e8c84a" stroke-width="1" rx="3" stroke-dasharray="5,4"/>
+      <text x="247" y="100" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace" letter-spacing="1">AVIONICS</text>
+      <text x="247" y="112" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace" letter-spacing="1">DATA BUS</text>
+      <text x="247" y="124" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">MIL-STD-1553B</text>
+      <text x="247" y="136" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">+ ARINC 429</text>
+      <line x1="247" y1="148" x2="247" y2="465" stroke="#e8c84a" stroke-width="1.5" opacity=".35"/>
+
+      <!-- Horizontal connections → bus -->
+      <line x1="158" y1="111" x2="188" y2="111" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+      <line x1="158" y1="187" x2="188" y2="187" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+      <line x1="158" y1="253" x2="188" y2="253" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+      <line x1="158" y1="310" x2="188" y2="310" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="158" y1="377" x2="188" y2="377" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="158" y1="444" x2="188" y2="444" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+
+      <!-- COMMS -->
+      <rect x="340" y="82" width="148" height="86" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.5" rx="3"/>
+      <text x="414" y="104" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">COMMS SYSTEM</text>
+      <text x="414" y="119" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">Ku-BAND SATCOM</text>
+      <text x="414" y="132" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">UHF/L-BAND LOS</text>
+      <text x="414" y="145" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">VHF ATC / HF BACKUP</text>
+      <text x="414" y="158" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">AES-256 ENCRYPTED</text>
+
+      <!-- PAYLOAD -->
+      <rect x="340" y="186" width="148" height="100" fill="#0b0e1a" stroke="#4ae8c8" stroke-width="1.5" rx="3"/>
+      <text x="414" y="207" text-anchor="middle" fill="#4ae8c8" font-size="10" font-family="'Share Tech Mono',monospace">PAYLOAD SUITE</text>
+      <text x="414" y="222" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">EO/IR TURRET</text>
+      <text x="414" y="235" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">SAR / LIDAR (OPT)</text>
+      <text x="414" y="248" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">LASER RANGEFINDER</text>
+      <text x="414" y="261" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">SIGINT ANTENNA</text>
+      <text x="414" y="276" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">PAYLOAD CPU / GPU</text>
+
+      <!-- FUEL -->
+      <rect x="340" y="304" width="148" height="50" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.2" rx="3"/>
+      <text x="414" y="324" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">FUEL SYSTEM</text>
+      <text x="414" y="338" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">~700 L JET-A / AvGas</text>
+      <text x="414" y="348" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">WET WING + FUSELAGE TANK</text>
+
+      <!-- HEALTH -->
+      <rect x="340" y="372" width="148" height="50" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1" rx="3"/>
+      <text x="414" y="392" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">VEHICLE HEALTH</text>
+      <text x="414" y="407" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">FDR / HUMS</text>
+      <text x="414" y="418" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">SENSOR FUSION</text>
+
+      <!-- Bus → right blocks -->
+      <line x1="306" y1="125" x2="340" y2="125" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+      <line x1="306" y1="236" x2="340" y2="236" stroke="#4ae8c8" stroke-width="1" marker-end="url(#ag)"/>
+      <line x1="306" y1="329" x2="340" y2="329" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="306" y1="397" x2="340" y2="397" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+
+      <!-- ===== GROUND ===== -->
+
+      <!-- GCS Workstations -->
+      <rect x="678" y="82" width="278" height="82" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.5" rx="3"/>
+      <text x="817" y="104" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">GCS — OPERATOR STATIONS</text>
+      <text x="817" y="119" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">PILOT + PAYLOAD OPERATOR</text>
+      <text x="817" y="132" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">MISSION PLANNING SOFTWARE</text>
+      <text x="817" y="145" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">REAL-TIME VEHICLE CONTROL</text>
+      <text x="817" y="157" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">RUGGEDISED SHELTER / VEHICLE</text>
+
+      <!-- SATCOM terminal -->
+      <rect x="678" y="182" width="130" height="62" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.2" rx="3"/>
+      <text x="743" y="202" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">SATCOM</text>
+      <text x="743" y="216" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">TERMINAL</text>
+      <text x="743" y="231" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">Ku-BAND DISH</text>
+      <text x="743" y="238" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">GLOBAL BEYOND-LOS</text>
+
+      <!-- LOS terminal -->
+      <rect x="826" y="182" width="130" height="62" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.2" rx="3"/>
+      <text x="891" y="202" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">LOS LINK</text>
+      <text x="891" y="216" text-anchor="middle" fill="#e8c84a" font-size="10" font-family="'Share Tech Mono',monospace">TERMINAL</text>
+      <text x="891" y="231" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">UHF/L-BAND</text>
+      <text x="891" y="238" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">~250–300 KM</text>
+
+      <!-- ISR Exploitation -->
+      <rect x="678" y="262" width="278" height="62" fill="#0b0e1a" stroke="#4ae8c8" stroke-width="1.3" rx="3"/>
+      <text x="817" y="283" text-anchor="middle" fill="#4ae8c8" font-size="10" font-family="'Share Tech Mono',monospace">ISR DATA EXPLOITATION</text>
+      <text x="817" y="298" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">FULL MOTION VIDEO + RECORDING</text>
+      <text x="817" y="311" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">TARGET GEO-LOCATION / TAGGING</text>
+      <text x="817" y="318" text-anchor="middle" fill="#3a5070" font-size="7" font-family="'Share Tech Mono',monospace">AI-ASSISTED OBJECT DETECTION (OPT)</text>
+
+      <!-- COMSEC -->
+      <rect x="678" y="342" width="278" height="48" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.2" rx="3"/>
+      <text x="817" y="362" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">CRYPTO / COMSEC</text>
+      <text x="817" y="377" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">AES-256 / TYPE-1 ENCRYPTION MODULES</text>
+
+      <!-- GCS Power -->
+      <rect x="678" y="408" width="278" height="42" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1" rx="3"/>
+      <text x="817" y="428" text-anchor="middle" fill="#e84a6a" font-size="10" font-family="'Share Tech Mono',monospace">GCS POWER SUPPLY</text>
+      <text x="817" y="441" text-anchor="middle" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">DIESEL GENERATOR + UPS — 24/7</text>
+
+      <!-- GCS internal connections -->
+      <line x1="817" y1="164" x2="817" y2="182" stroke="#e8c84a" stroke-width="1" marker-end="url(#ac)"/>
+      <line x1="817" y1="244" x2="817" y2="262" stroke="#4ae8c8" stroke-width="1" marker-end="url(#ag)"/>
+      <line x1="817" y1="324" x2="817" y2="342" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+      <line x1="817" y1="390" x2="817" y2="408" stroke="#e84a6a" stroke-width="1" marker-end="url(#ar)"/>
+
+      <!-- ===== RF DATALINKS ===== -->
+      <!-- SATCOM arc -->
+      <path d="M 488,120 Q 575,50 743,182" fill="none" stroke="#e8c84a" stroke-width="1.3" stroke-dasharray="8,4" marker-end="url(#ac)"/>
+      <text x="608" y="58" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace" transform="rotate(-22,608,58)">SATCOM C2 + ISR (Ku-BAND)</text>
+
+      <!-- LOS arc -->
+      <path d="M 488,136 Q 570,290 891,244" fill="none" stroke="#3a5070" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#ac)"/>
+      <text x="650" y="278" fill="#3a5070" font-size="8" font-family="'Share Tech Mono',monospace">LOS (UHF/L-BAND)</text>
+
+      <!-- ===== LEGEND ===== -->
+      <rect x="28" y="500" width="620" height="128" fill="#090c18" stroke="#1c2a42" stroke-width="1" rx="3"/>
+      <text x="44" y="520" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace" letter-spacing="2">LEGEND</text>
+
+      <line x1="44" y1="540" x2="90" y2="540" stroke="#e8c84a" stroke-width="1.5"/>
+      <text x="96" y="544" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">C2 / Avionics Bus</text>
+      <line x1="230" y1="540" x2="276" y2="540" stroke="#4ae8c8" stroke-width="1.5"/>
+      <text x="282" y="544" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">Payload / ISR Data</text>
+      <line x1="430" y1="540" x2="476" y2="540" stroke="#e84a6a" stroke-width="1.5"/>
+      <text x="482" y="544" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">Power / Propulsion</text>
+
+      <line x1="44" y1="562" x2="90" y2="562" stroke="#e8c84a" stroke-width="1.2" stroke-dasharray="8,4"/>
+      <text x="96" y="566" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">SATCOM RF Link</text>
+      <line x1="230" y1="562" x2="276" y2="562" stroke="#3a5070" stroke-width="1" stroke-dasharray="5,4"/>
+      <text x="282" y="566" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">LOS RF Link</text>
+
+      <rect x="44" y="578" width="13" height="9" fill="#0b0e1a" stroke="#e8c84a" stroke-width="1.2" rx="1"/>
+      <text x="62" y="587" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">Avionics / Control</text>
+      <rect x="230" y="578" width="13" height="9" fill="#0b0e1a" stroke="#4ae8c8" stroke-width="1.2" rx="1"/>
+      <text x="248" y="587" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">Payload Systems</text>
+      <rect x="430" y="578" width="13" height="9" fill="#0b0e1a" stroke="#e84a6a" stroke-width="1.2" rx="1"/>
+      <text x="448" y="587" fill="#c0d4e8" font-size="9" font-family="'Share Tech Mono',monospace">Propulsion / Power</text>
+
+      <!-- Pusher note box -->
+      <rect x="44" y="600" width="596" height="22" fill="rgba(232,200,74,.05)" stroke="#e8c84a" stroke-width=".8" rx="2"/>
+      <text x="342" y="615" text-anchor="middle" fill="#e8c84a" font-size="8" font-family="'Share Tech Mono',monospace">PUSHER CONFIG ADVANTAGE: CLEAN NOSE = UNOBSTRUCTED SENSOR FOV · INV-V TAIL = FEWER PARTS · LOWER BUILD COST</text>
+
+      <!-- Standards -->
+      <rect x="668" y="500" width="288" height="128" fill="#090c18" stroke="#1c2a42" stroke-width="1" rx="3"/>
+      <text x="684" y="520" fill="#3a5070" font-size="9" font-family="'Share Tech Mono',monospace" letter-spacing="2">STANDARDS</text>
+      <text x="684" y="538" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">MIL-STD-1553B   Data Bus</text>
+      <text x="684" y="552" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">STANAG 4586     GCS Interface</text>
+      <text x="684" y="566" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">STANAG 7023     ISR Data</text>
+      <text x="684" y="580" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">DO-178C         SW Assurance</text>
+      <text x="684" y="594" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">ICAO Annex 2    Airspace</text>
+      <text x="684" y="608" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">MIL-STD-810H    Environment</text>
+      <text x="684" y="622" fill="#c0d4e8" font-size="8" font-family="'Share Tech Mono',monospace">ITAR / EAR      Export Control</text>
+    </svg>
+  </div>
+</div>
+
+<div class="sbar">
+  <div style="display:flex;gap:8px;align-items:center;"><div class="sd"></div><span>DRAWING NO: UAV-PSH-001 / REV A</span></div>
+  <span>CONFIG: PUSHER · INVERTED-V TAIL · SINGLE PROP</span>
+  <span>SCALE: NOT TO EXACT SCALE</span>
+  <span>DATE: MAR 2026</span>
+  <span style="color:var(--accent)">● HOVER DOTS FOR COMPONENT DETAILS</span>
+</div>
+
+<div id="tt"></div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+const tt = document.getElementById('tt');
+document.querySelectorAll('.co').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    tt.innerHTML = `<div class="tt-t">${el.dataset.t}</div>${el.dataset.d}`;
+    tt.classList.add('show');
+  });
+  el.addEventListener('mousemove', e => {
+    let x = e.clientX + 16, y = e.clientY + 16;
+    if (x + 230 > window.innerWidth) x = e.clientX - 240;
+    if (y + 120 > window.innerHeight) y = e.clientY - 130;
+    tt.style.left = x + 'px'; tt.style.top = y + 'px';
+  });
+  el.addEventListener('mouseleave', () => tt.classList.remove('show'));
+});
+</script>
+</body>
+</html>

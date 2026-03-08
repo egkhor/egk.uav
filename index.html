@@ -98,6 +98,13 @@ nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
 .btn-outline:hover{background:rgba(212,168,32,.08);box-shadow:0 0 16px rgba(212,168,32,.3);}
 .btn-teal{background:transparent;color:var(--teal);border:1px solid var(--teal);}
 .btn-teal:hover{background:rgba(32,200,212,.08);}
+.btn-buy-data{
+  background:var(--gold);color:#000;font-weight:700;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  box-shadow:none;transition:all .2s;
+}
+.btn-buy-data:hover{background:var(--gold2);box-shadow:0 0 28px rgba(212,168,32,.55);transform:translateY(-1px);}
+.dl-card-buy::before{background:linear-gradient(90deg,var(--gold),#f0c030,var(--gold)) !important;}
 .hero-stats{
   display:flex;gap:48px;margin-top:56px;padding-top:32px;
   border-top:1px solid var(--border);animation:fadein 1s ease .5s both;flex-wrap:wrap;justify-content:center;
@@ -394,6 +401,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
         <button class="btn btn-gold" onclick="showBOM('lrs')">VIEW BOM</button>
         <button class="btn btn-outline" onclick="downloadDoc('lrs')">↓ DOWNLOAD DOCX</button>
         <a href="UAV_2000km_Technical_Drawing.html" target="_blank" class="btn btn-teal">DRAWING</a>
+        <a href="EGK_UAV_Sales_Site.html" target="_blank" class="btn btn-buy-data">BUY ENGINEERING DATA →</a>
       </div>
     </div>
 
@@ -471,6 +479,7 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
         <button class="btn btn-gold" onclick="showBOM('psh')">VIEW BOM</button>
         <button class="btn btn-outline" style="color:var(--teal);border-color:var(--teal);" onclick="downloadDoc('psh')">↓ DOWNLOAD DOCX</button>
         <a href="UAV_Pusher_InvertedV_Drawing.html" target="_blank" class="btn btn-teal">DRAWING</a>
+        <a href="EGK_UAV_Sales_Site.html" target="_blank" class="btn btn-buy-data">BUY ENGINEERING DATA →</a>
       </div>
     </div>
   </div>
@@ -610,6 +619,52 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   </div>
 </div>
 
+<!-- BUY ENGINEERING DATA BANNER -->
+<section id="buy-data" style="background:linear-gradient(135deg,#04060c 0%,#0a1020 50%,#04060c 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 48px;text-align:center;position:relative;overflow:hidden;">
+  <!-- Grid background -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(212,168,32,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,32,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;"></div>
+  <!-- Corner brackets -->
+  <div style="position:absolute;top:28px;left:48px;width:48px;height:48px;border-top:2px solid var(--gold);border-left:2px solid var(--gold);opacity:.6;"></div>
+  <div style="position:absolute;top:28px;right:48px;width:48px;height:48px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);opacity:.6;"></div>
+  <div style="position:absolute;bottom:28px;left:48px;width:48px;height:48px;border-bottom:2px solid rgba(212,168,32,.3);border-left:2px solid rgba(212,168,32,.3);"></div>
+  <div style="position:absolute;bottom:28px;right:48px;width:48px;height:48px;border-bottom:2px solid rgba(212,168,32,.3);border-right:2px solid rgba(212,168,32,.3);"></div>
+  <div style="position:relative;z-index:1;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:16px;">
+      <span style="width:48px;height:1px;background:var(--gold);display:inline-block;"></span>
+      EGK AERODYNAMIC DIVISION · PREMIUM ENGINEERING DATA
+      <span style="width:48px;height:1px;background:var(--gold);display:inline-block;"></span>
+    </div>
+    <h2 style="font-family:'Chakra Petch',monospace;font-size:clamp(24px,3.5vw,42px);font-weight:700;color:#fff;letter-spacing:2px;margin-bottom:10px;line-height:1.1;">
+      WANT THE FULL <span style="color:var(--gold);">AERODYNAMIC DATASET?</span>
+    </h2>
+    <p style="font-size:15px;color:var(--dim);max-width:600px;margin:0 auto 10px;line-height:1.75;">
+      Beyond BOM and drawings — purchase validated aero analysis, flight control parameters, drag polars, PID tuning data, and more. Tiered access from <strong style="color:var(--gold);">USD $49</strong>.
+    </p>
+    <!-- Tier pills -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:24px 0 32px;">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 16px;border:1px solid rgba(212,168,32,.3);color:var(--dim);">ALPHA $49 · Aero Analysis</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 16px;border:1px solid rgba(212,168,32,.3);color:var(--dim);">BETA $149 · + Research Paper</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 16px;border:1px solid var(--gold);color:var(--gold);background:rgba(212,168,32,.06);">DELTA $349 · + Full Coefficients ★</span>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 16px;border:1px solid rgba(212,168,32,.3);color:var(--dim);">SIGMA $699 · Complete FCS Package</span>
+    </div>
+    <a href="EGK_UAV_Sales_Site.html" target="_blank"
+       style="display:inline-flex;align-items:center;gap:12px;
+              background:var(--gold);color:#000;
+              font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:3px;
+              padding:18px 44px;text-decoration:none;text-transform:uppercase;
+              clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+              transition:all .2s;box-shadow:0 0 0 rgba(212,168,32,0);"
+       onmouseover="this.style.background='#f0c030';this.style.boxShadow='0 0 32px rgba(212,168,32,.55)';this.style.transform='translateY(-2px)';"
+       onmouseout="this.style.background='var(--gold)';this.style.boxShadow='none';this.style.transform='none';">
+      ▸ BUY ENGINEERING DATA
+      <span style="font-size:14px;font-weight:400;">→</span>
+    </a>
+    <div style="margin-top:16px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:2px;">
+      SECURE CHECKOUT · STRIPE · INSTANT DIGITAL DELIVERY · PDF + DOCX
+    </div>
+  </div>
+</section>
+
 <!-- DOWNLOADS -->
 <section id="downloads">
   <span class="sec-label">DOCUMENT DOWNLOADS</span>
@@ -644,6 +699,13 @@ footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
       <div class="dl-desc">Interactive HTML technical drawing — pusher / inverted-V. Orthographic, isometric + system architecture.</div>
       <div class="dl-meta">FORMAT: HTML  ·  INTERACTIVE  ·  3 VIEWS</div>
       <a href="UAV_Pusher_InvertedV_Drawing.html" target="_blank" class="btn btn-outline" style="color:var(--teal);border-color:var(--teal);">↗ OPEN DRAWING</a>
+    </div>
+    <div class="dl-card dl-card-buy" style="border-color:var(--gold);background:linear-gradient(135deg,rgba(212,168,32,.07),rgba(212,168,32,.02));">
+      <div class="dl-icon">📐</div>
+      <div class="dl-title" style="color:var(--gold);">Full Engineering Dataset</div>
+      <div class="dl-desc">Aero analysis · drag polar · lift coefficients · PID tuning · FCS architecture · static margin · Reynolds number · and 12 more parameters. Tiered pricing from $49.</div>
+      <div class="dl-meta" style="color:var(--gold);border-color:rgba(212,168,32,.2);">4 TIERS · USD $49–$699 · STRIPE CHECKOUT</div>
+      <a href="EGK_UAV_Sales_Site.html" target="_blank" class="btn btn-gold">BUY ENGINEERING DATA →</a>
     </div>
   </div>
 </section>
